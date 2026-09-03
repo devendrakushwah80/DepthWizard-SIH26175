@@ -42,9 +42,10 @@ export function getPointCloudPlyUrl(sceneId: string): string {
   return `${API_BASE_URL}/api/v1/scenes/${sceneId}/pointcloud.ply`;
 }
 
-export function getTextureUrl(sceneId: string, mode: 'rgb' | 'heightmap' | 'slope'): string {
+export function getTextureUrl(sceneId: string, mode: 'rgb' | 'heightmap' | 'relative_surface' | 'slope'): string {
   if (mode === 'rgb') return `${API_BASE_URL}/api/v1/scenes/${sceneId}/texture/rgb`;
   if (mode === 'heightmap') return `${API_BASE_URL}/api/v1/scenes/${sceneId}/heightmap`;
+  if (mode === 'relative_surface') return `${API_BASE_URL}/api/v1/scenes/${sceneId}/relative_surface`;
   if (mode === 'slope') return `${API_BASE_URL}/api/v1/scenes/${sceneId}/slope`;
   return `${API_BASE_URL}/api/v1/scenes/${sceneId}/texture/rgb`;
 }

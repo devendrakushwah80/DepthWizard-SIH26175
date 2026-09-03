@@ -28,8 +28,8 @@ import {
 
 interface ThreeDCanvasProps {
   metadata: SceneMetadataResponse | null;
-  activeTextureMode: 'rgb' | 'heightmap' | 'slope' | 'semantic';
-  onChangeTextureMode: (mode: 'rgb' | 'heightmap' | 'slope' | 'semantic') => void;
+  activeTextureMode: 'rgb' | 'relative_surface' | 'heightmap' | 'slope' | 'semantic';
+  onChangeTextureMode: (mode: 'rgb' | 'relative_surface' | 'heightmap' | 'slope' | 'semantic') => void;
   onInspectPixel: (u: number, v: number) => void;
   onMeasurePoint: (pt: [number, number]) => void;
   activeTool: 'inspect' | 'measure' | 'none';
@@ -98,6 +98,10 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({
   const absoluteDsmAvailable = Boolean(
     metadata?.output_semantics?.absolute_dsm_available
       || metadata?.products.absolute_dsm_tif
+  );
+  const relativeSurfaceAvailable = Boolean(
+    metadata?.products?.mesh_relative_glb
+      || metadata?.products?.relative_surface_npy
   );
 
   const setImageOrientationStatus = useCallback((active: boolean) => {
@@ -349,10 +353,14 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({
         const slopePromise = slopeAvailable
           ? loadTextureWithCacheRetry(getTextureUrl(sceneId, 'slope'))
           : Promise.resolve(null);
-        const [rgbTexture, heightTexture, slopeTexture] = await Promise.all([
+        const relativeSurfacePromise = metadata?.products?.texture_relative_surface
+          ? loadTextureWithCacheRetry(getTextureUrl(sceneId, 'relative_surface'))
+          : Promise.resolve(null);
+        const [rgbTexture, heightTexture, slopeTexture, relativeSurfaceTexture] = await Promise.all([
           rgbPromise,
           heightPromise,
-          slopePromise
+          slopePromise,
+          relativeSurfacePromise
         ]);
         if (cancelled) return;
 
@@ -361,6 +369,7 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({
           heightmap: heightTexture
         };
         if (slopeTexture) loadedTextures.slope = slopeTexture;
+        if (relativeSurfaceTexture) loadedTextures.relative_surface = relativeSurfaceTexture;
         for (const texture of Object.values(loadedTextures)) {
           // GLB UVs use the glTF convention; replacement layers must match it.
           texture.flipY = false;
@@ -746,17 +755,27 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-slate-500 font-semibold">Surface:</span>
           <div className="flex bg-slate-950 p-0.5 rounded border border-slate-800">
+            {relativeSurfaceAvailable && (
+              <button
+                onClick={() => { setExperienceMode('custom'); onChangeSurfaceMode('relative'); }}
+                title="Relative Surface / rDSM: Scale-agnostic monocular geometry derived from DAV2 prior (non-metric [0, 1])"
+                className={`px-2 py-0.5 rounded transition-colors ${surfaceMode === 'relative' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40' : 'text-slate-400 hover:text-white'}`}
+              >
+                Relative Surface
+              </button>
+            )}
             <button
               onClick={() => { setExperienceMode('custom'); onChangeSurfaceMode('agl'); }}
-              className={`px-2 py-0.5 rounded ${surfaceMode === 'agl' ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-400 hover:text-white'}`}
+              title="Predicted AGL / nDSM: AI-estimated height above local ground in metres"
+              className={`px-2 py-0.5 rounded transition-colors ${surfaceMode === 'agl' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-white'}`}
             >
-              AGL / nDSM
+              Predicted AGL
             </button>
             <button
               onClick={() => { if (absoluteDsmAvailable) { setExperienceMode('custom'); onChangeSurfaceMode('absolute_dsm'); } }}
               disabled={!absoluteDsmAvailable}
-              title={absoluteDsmAvailable ? 'Terrain DEM + predicted AGL' : 'Absolute DSM requires an aligned terrain DEM.'}
-              className={`px-2 py-0.5 rounded ${!absoluteDsmAvailable ? 'text-slate-700 cursor-not-allowed' : surfaceMode === 'absolute_dsm' ? 'bg-emerald-500/20 text-emerald-300' : 'text-slate-400 hover:text-white'}`}
+              title={absoluteDsmAvailable ? 'Absolute DSM: Terrain elevation plus predicted above-ground height in metres' : 'Absolute DSM requires an aligned terrain DEM.'}
+              className={`px-2 py-0.5 rounded transition-colors ${!absoluteDsmAvailable ? 'text-slate-700 cursor-not-allowed' : surfaceMode === 'absolute_dsm' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-slate-400 hover:text-white'}`}
             >
               Absolute DSM
             </button>
@@ -779,6 +798,19 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({
             >
               Optical RGB
             </button>
+            {metadata?.products?.texture_relative_surface && (
+              <button
+                onClick={() => onChangeTextureMode('relative_surface' as any)}
+                title="Monocular relative depth prior texture"
+                className={`px-2.5 py-0.5 rounded font-medium transition-colors ${
+                  (activeTextureMode as string) === 'relative_surface'
+                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Relative Surface
+              </button>
+            )}
             <button
               onClick={() => onChangeTextureMode('heightmap')}
               className={`px-2.5 py-0.5 rounded font-medium transition-colors ${

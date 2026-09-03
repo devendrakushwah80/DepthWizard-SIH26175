@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export type CameraPreset = 'image_aligned' | 'top' | 'oblique' | 'eye';
 export type ProjectionMode = 'perspective' | 'orthographic';
-export type SurfaceMode = 'agl' | 'absolute_dsm';
+export type SurfaceMode = 'relative' | 'agl' | 'absolute_dsm';
 
 export interface TerrainFrame {
   box: THREE.Box3;

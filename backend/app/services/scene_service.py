@@ -58,6 +58,10 @@ class SceneService:
         mapping = {
             "predicted_agl_npy": os.path.join("rasters", "predicted_agl.npy"),
             "predicted_agl_tif": os.path.join("rasters", "predicted_agl.tif"),
+            "relative_surface_npy": os.path.join("rasters", "relative_surface.npy"),
+            "relative_surface_png": os.path.join("textures", "relative_surface.png"),
+            "base_dem_npy": os.path.join("rasters", "base_dem.npy"),
+            "aligned_terrain_dem_tif": os.path.join("rasters", "aligned_terrain_dem.tif"),
             "absolute_dsm_npy": os.path.join("rasters", "absolute_dsm.npy"),
             "absolute_dsm_tif": os.path.join("rasters", "absolute_dsm.tif"),
             "height_visualization_png": os.path.join("textures", "height_heatmap.png"),
@@ -65,6 +69,7 @@ class SceneService:
             "rgb_texture_jpg": os.path.join("textures", "rgb.jpg"),
             "mesh_glb": os.path.join("mesh", "scene.glb"),
             "mesh_agl_glb": os.path.join("mesh", "scene_agl.glb"),
+            "mesh_relative_glb": os.path.join("mesh", "scene_relative.glb"),
             "mesh_absolute_dsm_glb": os.path.join("mesh", "scene_absolute_dsm.glb"),
             "mesh_obj": os.path.join("mesh", "scene.obj"),
             "pointcloud_ply": os.path.join("pointcloud", "scene.ply"),
@@ -82,6 +87,8 @@ class SceneService:
         predicted_agl: np.ndarray,
         spatial_meta: dict,
         base_dem: np.ndarray = None,
+        relative_surface: np.ndarray = None,
+        dem_provenance: dict = None,
         semantic_mask: np.ndarray = None,
         generate_3d: bool = True,
         generate_pointcloud: bool = True,
@@ -124,6 +131,12 @@ class SceneService:
         transform = spatial_meta.get("transform")
 
         np.save(os.path.join(dir_rasters, "predicted_agl.npy"), predicted_agl.astype(np.float32))
+        if relative_surface is not None:
+            np.save(os.path.join(dir_rasters, "relative_surface.npy"), relative_surface.astype(np.float32))
+            generate_height_heatmap_texture(
+                relative_surface, vmin=0.0, vmax=1.0, cmap_name="turbo"
+            ).save(os.path.join(dir_textures, "relative_surface.png"), "PNG")
+
         if base_dem is not None:
             np.save(os.path.join(dir_rasters, "base_dem.npy"), base_dem.astype(np.float32))
             np.save(
@@ -181,6 +194,8 @@ class SceneService:
         mesh_generation_s = 0.0
         glb_generation_s = 0.0
         obj_generation_s = 0.0
+        relative_mesh_generation_s = 0.0
+        relative_mesh_meta = {}
         absolute_mesh_generation_s = 0.0
         absolute_mesh_meta = {}
         if generate_3d:
@@ -204,6 +219,33 @@ class SceneService:
             export_mesh_obj(mesh_3d, os.path.join(dir_mesh, "scene.obj"))
             obj_generation_s = time.perf_counter() - obj_start
 
+            if relative_surface is not None:
+                rel_mesh_start = time.perf_counter()
+                rel_scene_obj = Scene3D(
+                    scene_id=scene_id,
+                    rgb=rgb_image,
+                    predicted_agl=relative_surface * 25.0,
+                    semantic=semantic_mask,
+                    gsd=gsd_m,
+                    is_georeferenced=is_geo,
+                    crs=crs,
+                    transform=transform,
+                    bounds=bounds,
+                    base_dem=None,
+                )
+                rel_mesh = build_terrain_mesh(
+                    rel_scene_obj,
+                    mesh_resolution=mesh_resolution,
+                    downsample_method="max_aware",
+                    vertical_exaggeration=1.0,
+                    add_side_skirts=True,
+                )
+                relative_mesh_meta = export_mesh_glb(
+                    rel_mesh,
+                    os.path.join(dir_mesh, "scene_relative.glb"),
+                )
+                relative_mesh_generation_s = time.perf_counter() - rel_mesh_start
+
             if base_dem is not None:
                 absolute_mesh_start = time.perf_counter()
                 absolute_mesh = build_terrain_mesh(
@@ -219,12 +261,16 @@ class SceneService:
                 )
                 absolute_mesh_generation_s = time.perf_counter() - absolute_mesh_start
 
-            mesh_meta["default_surface"] = "predicted_agl"
-            mesh_meta["available_surfaces"] = (
-                ["predicted_agl", "absolute_dsm"]
-                if base_dem is not None
-                else ["predicted_agl"]
+            available_surfaces = ["predicted_agl"]
+            if relative_surface is not None:
+                available_surfaces.insert(0, "relative_surface")
+            if base_dem is not None:
+                available_surfaces.append("absolute_dsm")
+
+            mesh_meta["default_surface"] = (
+                "relative_surface" if (not is_geo and relative_surface is not None) else "predicted_agl"
             )
+            mesh_meta["available_surfaces"] = available_surfaces
 
         ply_meta = {}
         pointcloud_generation_s = 0.0
@@ -248,14 +294,19 @@ class SceneService:
         products = {
             "predicted_agl_npy": True,
             "predicted_agl_tif": os.path.exists(os.path.join(dir_rasters, "predicted_agl.tif")),
+            "relative_surface_npy": relative_surface is not None,
+            "relative_surface_png": relative_surface is not None,
+            "aligned_terrain_dem_tif": os.path.exists(os.path.join(dir_rasters, "aligned_terrain_dem.tif")),
             "absolute_dsm_tif": os.path.exists(os.path.join(dir_rasters, "absolute_dsm.tif")),
             "mesh_glb": generate_3d,
             "mesh_agl_glb": generate_3d,
+            "mesh_relative_glb": generate_3d and relative_surface is not None,
             "mesh_absolute_dsm_glb": generate_3d and base_dem is not None,
             "mesh_obj": generate_3d,
             "pointcloud_ply": generate_pointcloud,
             "texture_rgb": True,
             "texture_height_heatmap": True,
+            "texture_relative_surface": relative_surface is not None,
             "texture_semantic": semantic_mask is not None,
             "texture_slope_heatmap": slope_deg is not None,
         }
@@ -265,6 +316,7 @@ class SceneService:
                 "mesh_generation_s": round(mesh_generation_s, 6),
                 "glb_generation_s": round(glb_generation_s, 6),
                 "obj_generation_s": round(obj_generation_s, 6),
+                "relative_mesh_generation_s": round(relative_mesh_generation_s, 6),
                 "absolute_mesh_generation_s": round(absolute_mesh_generation_s, 6),
                 "pointcloud_generation_s": round(pointcloud_generation_s, 6),
             }
@@ -300,17 +352,14 @@ class SceneService:
                 "transform": transform,
                 "resolution": spatial_meta.get("resolution"),
             },
+            "dem_provenance": dem_provenance,
             "output_semantics": {
                 "primary": "predicted_agl_ndsm",
                 "vertical_unit": "metres",
                 "horizontal_metric_scale_known": gsd_m is not None,
                 "absolute_dsm_available": base_dem is not None,
-                "mesh_height_surface": "predicted_agl",
-                "available_mesh_surfaces": (
-                    ["predicted_agl", "absolute_dsm"]
-                    if base_dem is not None
-                    else ["predicted_agl"]
-                ),
+                "mesh_height_surface": mesh_meta.get("default_surface", "predicted_agl"),
+                "available_mesh_surfaces": available_surfaces if generate_3d else [],
                 "mesh_horizontal_units": agl_scene_obj.horizontal_units,
                 "vertical_exaggeration_baked_into_artifacts": 1.0,
             },
@@ -333,6 +382,21 @@ class SceneService:
                     if products["predicted_agl_tif"]
                     else None
                 ),
+                "relative_surface_npy": (
+                    f"/api/v1/scenes/{scene_id}/download/relative_surface.npy"
+                    if products["relative_surface_npy"]
+                    else None
+                ),
+                "relative_surface_png": (
+                    f"/api/v1/scenes/{scene_id}/relative_surface"
+                    if products["relative_surface_png"]
+                    else None
+                ),
+                "aligned_terrain_dem_tif": (
+                    f"/api/v1/scenes/{scene_id}/download/aligned_terrain_dem.tif"
+                    if products["aligned_terrain_dem_tif"]
+                    else None
+                ),
                 "absolute_dsm_tif": (
                     f"/api/v1/scenes/{scene_id}/download/absolute_dsm.tif"
                     if products["absolute_dsm_tif"]
@@ -342,6 +406,11 @@ class SceneService:
                 "mesh_agl_glb": (
                     f"/api/v1/scenes/{scene_id}/mesh.glb?surface=agl"
                     if generate_3d
+                    else None
+                ),
+                "mesh_relative_glb": (
+                    f"/api/v1/scenes/{scene_id}/mesh.glb?surface=relative"
+                    if products["mesh_relative_glb"]
                     else None
                 ),
                 "mesh_absolute_dsm_glb": (
@@ -355,12 +424,18 @@ class SceneService:
                 "metadata": f"/api/v1/scenes/{scene_id}/metadata",
                 "texture_rgb": f"/api/v1/scenes/{scene_id}/texture/rgb",
                 "heightmap": f"/api/v1/scenes/{scene_id}/heightmap",
+                "relative_surface": (
+                    f"/api/v1/scenes/{scene_id}/relative_surface"
+                    if products["texture_relative_surface"]
+                    else None
+                ),
                 "slope": f"/api/v1/scenes/{scene_id}/slope" if slope_deg is not None else None,
             },
             "processing_timings": timings,
             "peak_vram_mb": round(float(peak_vram_mb), 3),
             "warnings": warnings,
             "mesh_info": mesh_meta,
+            "relative_surface_mesh_info": relative_mesh_meta,
             "absolute_surface_mesh_info": absolute_mesh_meta,
             "pointcloud_info": ply_meta,
         }

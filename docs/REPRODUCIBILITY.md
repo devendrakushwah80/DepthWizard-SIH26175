@@ -58,6 +58,11 @@ Expected SHA256:
 6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f
 ```
 
+## Docker support
+
+Container configuration included; build not validated in this release.
+
+
 The backend verifies this digest and does not silently fall back to another
 trained checkpoint.
 

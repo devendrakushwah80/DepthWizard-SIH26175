@@ -72,7 +72,12 @@ async def get_mesh_glb(
     recorded_surface = metadata.get("output_semantics", {}).get(
         "mesh_height_surface", "predicted_agl"
     )
-    if surface == "absolute_dsm":
+    if surface in ("relative", "relative_surface"):
+        candidates = [
+            os.path.join(scene_dir, "mesh", "scene_relative.glb"),
+            os.path.join(scene_dir, "mesh", "scene.glb"),
+        ]
+    elif surface == "absolute_dsm":
         candidates = [os.path.join(scene_dir, "mesh", "scene_absolute_dsm.glb")]
         if recorded_surface == "absolute_dsm":
             candidates.append(os.path.join(scene_dir, "mesh", "scene.glb"))
@@ -84,7 +89,7 @@ async def get_mesh_glb(
     glb_path = next((path for path in candidates if os.path.exists(path)), "")
 
     # Fallback for legacy AGL scenes with a directly named GLB.
-    if surface == "agl" and not glb_path:
+    if surface in ("agl", "relative") and not glb_path:
         candidates = [f for f in os.listdir(scene_dir) if f.endswith('.glb')] if os.path.exists(scene_dir) else []
         if candidates:
             glb_path = os.path.join(scene_dir, candidates[0])
@@ -92,6 +97,8 @@ async def get_mesh_glb(
     if not os.path.exists(glb_path):
         if surface == "absolute_dsm":
             raise AssetNotAvailableError("Absolute DSM mesh requires an aligned terrain DEM")
+        if surface in ("relative", "relative_surface"):
+            raise AssetNotAvailableError("Relative Surface mesh.glb")
         raise AssetNotAvailableError("AGL mesh.glb")
         
     return FileResponse(
@@ -138,6 +145,14 @@ async def get_heightmap_texture(scene_id: str):
         raise AssetNotAvailableError("height_heatmap.png")
     return FileResponse(path, media_type="image/png" if path.endswith('.png') else "image/jpeg")
 
+@router.get("/{scene_id}/relative_surface", summary="Get Relative Surface Texture")
+async def get_relative_surface_texture(scene_id: str):
+    scene_dir = scene_service.get_scene_dir(scene_id)
+    path = os.path.join(scene_dir, "textures", "relative_surface.png")
+    if not os.path.exists(path):
+        raise AssetNotAvailableError("relative_surface.png")
+    return FileResponse(path, media_type="image/png")
+
 @router.get("/{scene_id}/slope", summary="Get Slope Heatmap Texture")
 async def get_slope_texture(scene_id: str):
     scene_dir = scene_service.get_scene_dir(scene_id)
@@ -166,10 +181,19 @@ async def download_artifact(scene_id: str, asset_name: str):
         'predicted_agl.tif': os.path.join(scene_dir, "rasters", "predicted_agl.tif"),
         'dsm.tif': os.path.join(scene_dir, "rasters", "absolute_dsm.tif"),
         'absolute_dsm.tif': os.path.join(scene_dir, "rasters", "absolute_dsm.tif"),
+        'aligned_terrain_dem.tif': os.path.join(scene_dir, "rasters", "aligned_terrain_dem.tif"),
+        'terrain_dem.tif': os.path.join(scene_dir, "rasters", "aligned_terrain_dem.tif"),
+        'dem.tif': os.path.join(scene_dir, "rasters", "aligned_terrain_dem.tif"),
         'predicted_agl.npy': os.path.join(scene_dir, "rasters", "predicted_agl.npy"),
         'absolute_dsm.npy': os.path.join(scene_dir, "rasters", "absolute_dsm.npy"),
+        'base_dem.npy': os.path.join(scene_dir, "rasters", "base_dem.npy"),
+        'relative_surface.npy': os.path.join(scene_dir, "rasters", "relative_surface.npy"),
+        'relative_surface.png': os.path.join(scene_dir, "textures", "relative_surface.png"),
         'mesh.glb': os.path.join(scene_dir, "mesh", "scene.glb"),
         'scene.glb': os.path.join(scene_dir, "mesh", "scene.glb"),
+        'scene_agl.glb': os.path.join(scene_dir, "mesh", "scene_agl.glb"),
+        'scene_relative.glb': os.path.join(scene_dir, "mesh", "scene_relative.glb"),
+        'scene_absolute_dsm.glb': os.path.join(scene_dir, "mesh", "scene_absolute_dsm.glb"),
         'mesh.obj': os.path.join(scene_dir, "mesh", "scene.obj"),
         'pointcloud.ply': os.path.join(scene_dir, "pointcloud", "scene.ply"),
         'scene.ply': os.path.join(scene_dir, "pointcloud", "scene.ply")

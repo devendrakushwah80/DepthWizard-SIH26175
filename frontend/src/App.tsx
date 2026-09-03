@@ -29,8 +29,8 @@ export const App: React.FC = () => {
 
   // 3. UI State
   const [activeViewMode, setActiveViewMode] = useState<'2d' | '3d'>('3d');
-  const [active2DLayer, setActive2DLayer] = useState<'heightmap' | 'slope' | 'semantic'>('heightmap');
-  const [active3DTexture, setActive3DTexture] = useState<'rgb' | 'heightmap' | 'slope' | 'semantic'>('rgb');
+  const [active2DLayer, setActive2DLayer] = useState<'heightmap' | 'relative_surface' | 'slope' | 'semantic'>('heightmap');
+  const [active3DTexture, setActive3DTexture] = useState<'rgb' | 'relative_surface' | 'heightmap' | 'slope' | 'semantic'>('rgb');
   const [activeTool, setActiveTool] = useState<'inspect' | 'measure' | 'none'>('inspect');
   const [verticalExaggeration, setVerticalExaggeration] = useState<number>(5.0);
   const [projectionMode, setProjectionMode] = useState<ProjectionMode>(() =>
@@ -38,11 +38,12 @@ export const App: React.FC = () => {
       ? 'orthographic'
       : 'perspective'
   );
-  const [surfaceMode, setSurfaceMode] = useState<SurfaceMode>(() =>
-    new URLSearchParams(window.location.search).get('surface') === 'absolute_dsm'
-      ? 'absolute_dsm'
-      : 'agl'
-  );
+  const [surfaceMode, setSurfaceMode] = useState<SurfaceMode>(() => {
+    const s = new URLSearchParams(window.location.search).get('surface');
+    if (s === 'absolute_dsm') return 'absolute_dsm';
+    if (s === 'relative') return 'relative';
+    return 'agl';
+  });
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
 

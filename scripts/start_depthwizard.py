@@ -1,5 +1,5 @@
 """
-DepthWizard (SIH26175) — Fast Reliable System Launcher
+DepthWizard (SIH26175) — Fast Reliable System Launcher & Preflight
 ISRO / Department of Space — Smart India Hackathon 2026
 
 Starts Backend (FastAPI on :8000) and Frontend (Vite on :3000), verifies health, and opens the web application.
@@ -14,99 +14,218 @@ import urllib.request
 import json
 import webbrowser
 import hashlib
+import functools
 
-M2_SHA256 = "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
+print = functools.partial(print, flush=True)
+
+M2_EXPECTED_SHA256 = "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
+DAV2_MODEL_ID = "depth-anything/Depth-Anything-V2-Small-hf"
 
 def is_port_in_use(port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(('127.0.0.1', port)) == 0
+    for host in ('localhost', '127.0.0.1'):
+        try:
+            with socket.create_connection((host, port), timeout=0.5):
+                return True
+        except Exception:
+            pass
+    return False
+
+def check_frontend_ready():
+    for url in ("http://localhost:3000", "http://127.0.0.1:3000"):
+        try:
+            req = urllib.request.urlopen(url, timeout=1)
+            if req.getcode() == 200:
+                return True
+        except Exception:
+            pass
+    return False
 
 def check_backend_health():
+    for url in ("http://127.0.0.1:8000/health", "http://localhost:8000/health"):
+        try:
+            req = urllib.request.urlopen(url, timeout=2)
+            data = json.loads(req.read().decode())
+            if data.get("status") == "ok":
+                return True, data
+        except Exception:
+            pass
+    return False, None
+
+def run_preflight_checks(project_root: str):
+    print("=" * 80)
+    print("  ISRO DEPTHWIZARD (SIH26175) — STARTUP PREFLIGHT CHECKLIST")
+    print("=" * 80)
+
+    # 1. M2 Checkpoint Present
+    ckpt_path = os.path.join(project_root, "models", "m2_final", "M2_FINAL.pth")
+    m2_present = os.path.exists(ckpt_path)
+
+    # 2. M2 Checkpoint SHA-256 Verified
+    m2_sha_ok = False
+    if m2_present:
+        hasher = hashlib.sha256()
+        with open(ckpt_path, "rb") as f:
+            while chunk := f.read(65536):
+                hasher.update(chunk)
+        m2_sha_ok = (hasher.hexdigest().lower() == M2_EXPECTED_SHA256)
+
+    # 3. DAV2 Available / Cached
+    dav2_cached = False
     try:
-        req = urllib.request.urlopen("http://127.0.0.1:8000/health", timeout=2)
-        data = json.loads(req.read().decode())
-        return data.get("status") == "ok", data
+        from huggingface_hub import try_to_load_from_cache
+        res = try_to_load_from_cache(DAV2_MODEL_ID, "config.json")
+        dav2_cached = isinstance(res, str)
     except Exception:
-        return False, None
+        # Fallback check under ~/.cache/huggingface/hub
+        cache_dir = os.path.expanduser("~/.cache/huggingface/hub/models--depth-anything--Depth-Anything-V2-Small-hf")
+        dav2_cached = os.path.exists(cache_dir)
+
+    # 4. CUDA Available & Selected Device
+    cuda_available = False
+    selected_device = "cpu"
+    try:
+        import torch
+        cuda_available = torch.cuda.is_available()
+        if cuda_available:
+            selected_device = f"cuda ({torch.cuda.get_device_name(0)})"
+        else:
+            selected_device = "cpu"
+    except Exception:
+        pass
+
+    # 5. Outputs Directory Writable
+    outputs_dir = os.path.join(project_root, "outputs")
+    outputs_writable = False
+    try:
+        os.makedirs(outputs_dir, exist_ok=True)
+        test_file = os.path.join(outputs_dir, ".preflight_write_test")
+        with open(test_file, "w") as f:
+            f.write("ok")
+        os.remove(test_file)
+        outputs_writable = True
+    except Exception:
+        outputs_writable = False
+
+    # 6. Runtime Configuration Valid
+    storage_dir = os.path.join(project_root, "storage", "scenes")
+    os.makedirs(storage_dir, exist_ok=True)
+    runtime_config_valid = m2_present and m2_sha_ok and outputs_writable
+
+    # Report Preflight Checklist
+    print(f"  [1] M2 checkpoint present:             {'YES' if m2_present else 'NO'}")
+    print(f"  [2] M2 SHA verified:                    {'YES' if m2_sha_ok else 'NO'}")
+    print(f"  [3] DAV2 available/cached:              {'YES' if dav2_cached else 'NO'}")
+    print(f"  [4] CUDA available:                     {'YES' if cuda_available else 'NO'}")
+    print(f"  [5] Selected inference device:          {selected_device}")
+    print(f"  [6] Outputs directory writable:         {'YES' if outputs_writable else 'NO'}")
+    print(f"  [7] Required runtime config valid:      {'YES' if runtime_config_valid else 'NO'}")
+    print("=" * 80)
+
+    if not dav2_cached:
+        print("  NOTE: If DAV2 is not cached, download it in advance using:")
+        print("    python -c \"from transformers import AutoModelForDepthEstimation; AutoModelForDepthEstimation.from_pretrained('depth-anything/Depth-Anything-V2-Small-hf')\"")
+        print("=" * 80)
+
+    if not m2_present or not m2_sha_ok:
+        print(f"[FATAL ERROR] M2-FINAL Checkpoint integrity failed. Exiting.")
+        sys.exit(1)
+
+    return runtime_config_valid
 
 def main():
-    print("=" * 80)
-    print("  ISRO DEPTHWIZARD (SIH26175)")
-    print("  Single-View Height Estimation and 3D Flythrough")
-    print("=" * 80)
-
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(project_root)
 
-    # 1. Check Python Virtual Environment
+    # Execute Preflight Checklist
+    run_preflight_checks(project_root)
+
     python_exe = sys.executable
-    print(f"[Step 1] Python Runtime: {python_exe}")
+    backend_proc = None
 
-    # 2. Check Model Checkpoint
-    ckpt_path = os.path.join(project_root, "models", "m2_final", "M2_FINAL.pth")
-    if not os.path.exists(ckpt_path):
-        print(f"[Error] M2-FINAL checkpoint not found at: {ckpt_path}")
-        sys.exit(1)
-    digest = hashlib.sha256()
-    with open(ckpt_path, "rb") as checkpoint_file:
-        for chunk in iter(lambda: checkpoint_file.read(1024 * 1024), b""):
-            digest.update(chunk)
-    if digest.hexdigest() != M2_SHA256:
-        print(f"[Error] M2-FINAL SHA256 mismatch: {digest.hexdigest()}")
-        sys.exit(1)
-    print(f"[Step 2] Verified sealed M2-FINAL ({os.path.getsize(ckpt_path)/(1024*1024):.2f} MB, SHA256 OK)")
-
-    # 3. Check / Start Backend (:8000)
-    print("[Step 3] Checking FastAPI Backend on http://127.0.0.1:8000...")
+    # 1. Check / Start Backend (:8000)
+    print("\n[Step 1] Checking FastAPI Backend on http://127.0.0.1:8000...")
     is_healthy, h_data = check_backend_health()
     if is_healthy:
-        print(f"[OK] Backend is already running and ready! (Model: {h_data['model']['name']})")
+        print(f"  [OK] Backend is already running! (Model: {h_data['model']['name']} on {h_data['model']['device']})")
     else:
-        print("Starting FastAPI Backend Server on port 8000...")
+        print("  Starting FastAPI Backend Server on port 8000...")
         backend_proc = subprocess.Popen(
             [python_exe, "-m", "uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"],
             cwd=project_root,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        # Wait up to 30 seconds for model preloading
         for _ in range(30):
             time.sleep(1)
             is_healthy, h_data = check_backend_health()
             if is_healthy:
-                print(f"[OK] Backend Online! Resident Model: {h_data['model']['name']} on {h_data['model']['device']}")
+                print(f"  [OK] Backend Online! Resident Model: {h_data['model']['name']} on {h_data['model']['device']}")
                 break
         if not is_healthy:
-            print("[Error] Backend failed to start. Please check if another process is using port 8000.")
+            print("  [Error] Backend failed to start. Please verify port 8000.")
             sys.exit(1)
 
-    # 4. Check / Start Frontend (:3000)
-    print("[Step 4] Checking Vite React Frontend on http://127.0.0.1:3000...")
-    frontend_in_use = is_port_in_use(3000)
+    # 2. Check / Start Frontend (:3000)
+    print("\n[Step 2] Checking Vite React Frontend on http://localhost:3000...")
+    frontend_proc = None
+    frontend_in_use = is_port_in_use(3000) or check_frontend_ready()
     if frontend_in_use:
-        print("[OK] Frontend is already running on port 3000!")
+        print("  [OK] Frontend is already running on port 3000!")
     else:
-        print("Starting Vite React Frontend Server...")
+        print("  Starting Vite React Frontend Server...")
         frontend_dir = os.path.join(project_root, "frontend")
         npm_cmd = "npm.cmd" if sys.platform == "win32" else "npm"
-        subprocess.Popen(
+        frontend_proc = subprocess.Popen(
             [npm_cmd, "run", "dev"],
             cwd=frontend_dir,
+            shell=(sys.platform == "win32"),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        time.sleep(3)
-        print("[OK] Frontend Dev Server started!")
+        for _ in range(20):
+            time.sleep(1)
+            if is_port_in_use(3000) or check_frontend_ready():
+                print("  [OK] Frontend Dev Server started!")
+                break
 
-    # 5. Open Web Browser
+    # 3. Validation or Interactive Loop
+    print("\n" + "=" * 80)
+    print("  DEPTHWIZARD IS ONLINE AND READY FOR SIH EVALUATION!")
+    print("    -> Web Application URL: http://localhost:3000/")
+    print("    -> Backend API Docs:    http://localhost:8000/docs")
+    print("    -> Backend Health API:  http://localhost:8000/health")
     print("=" * 80)
-    print("DEPTHWIZARD IS ONLINE AND READY FOR SIH EVALUATION!")
-    print("  -> Web Application URL: http://localhost:3000/")
-    print("  -> Backend API Docs:    http://localhost:8000/docs")
-    print("  -> Backend Health API:  http://localhost:8000/health")
-    print("=" * 80)
-    print("Opening web browser at http://localhost:3000/ ...")
-    webbrowser.open("http://localhost:3000/")
+
+    if "--validate" in sys.argv:
+        print("Running automatic validation check...")
+        h_ok, h_info = check_backend_health()
+        assert h_ok, "Backend health check failed!"
+        print(f"  [Validation] Backend Health OK: {h_info}")
+        f_in_use = is_port_in_use(3000) or check_frontend_ready()
+        assert f_in_use, "Frontend port 3000 not responding!"
+        print(f"  [Validation] Frontend Port 3000 Responding OK")
+        print("  [Validation] Standalone Launch Validation: ALL CHECKS PASSED")
+        if backend_proc:
+            backend_proc.terminate()
+        if frontend_proc:
+            if sys.platform == "win32":
+                subprocess.run(["taskkill", "/F", "/T", "/PID", str(frontend_proc.pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            else:
+                frontend_proc.terminate()
+        sys.exit(0)
+
+    if not os.environ.get("CI") and not os.environ.get("NO_BROWSER"):
+        print("Opening web browser at http://localhost:3000/ ...")
+        webbrowser.open("http://localhost:3000/")
+
+    try:
+        print("\nDepthWizard is running. Press Ctrl+C to exit.")
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nShutting down DepthWizard...")
+        if backend_proc:
+            backend_proc.terminate()
 
 if __name__ == '__main__':
     main()

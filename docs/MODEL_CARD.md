@@ -21,10 +21,22 @@ was frozen.
 
 ## Recorded evaluation
 
-| Evaluation | Tiles | MAE (m) | RMSE (m) | Pearson r | R2 | Bias (m) |
-|---|---:|---:|---:|---:|---:|---:|
-| Final PHL/DC validation | 200 | 2.518 | 4.738 | 0.806 | 0.631 | -0.918 |
-| Held-out NYC | 496 | 4.844 | 8.144 | 0.272 | -0.222 | -3.141 |
+| Evaluation | Tiles | Pixels | MAE (m) | RMSE (m) | Pearson r | R2 | Bias (m) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Final PHL/DC validation | 200 | ~200M | 2.518 | 4.738 | 0.806 | 0.631 | -0.918 |
+| Held-out NYC (all pixels) | 496 | 478,021,075 | 4.844 | 8.144 | 0.272 | -0.222 | -3.141 |
+| Held-out NYC (building pixels) | 496 | 66,797,828 | 4.388 | 6.415 | 0.335 | -0.215 | -0.423 |
+
+### Held-Out NYC Height Stratification (Zero-Shot)
+
+*NYC was strictly held out and never used for training, hyperparameter search, or calibration.*
+
+| Height Range | Support | Pixel Count | MAE (m) | RMSE (m) | Bias (m) | Accuracy Threshold |
+|---|---:|---:|---:|---:|---:|---|
+| **0–2 m (Ground / Low)** | 50.96% | 243,616,087 | 0.985 | 2.672 | +0.771 | 82.49% within 1m, 89.19% within 2m |
+| **2–10 m (Low-Rise)** | 25.60% | 122,385,904 | 4.425 | 5.294 | -1.745 | 61.22% within 5m, 97.86% within 10m |
+| **10–20 m (Mid-Rise)** | 16.97% | 81,118,423 | 11.246 | 12.425 | -10.923 | Underestimation onset |
+| **>20 m (High-Rise)** | 6.46% | 30,900,661 | 24.364 | 27.094 | -24.237 | Severe upper-tail compression |
 
 The compact source reports are retained under `docs/evidence/`. Dataset manifests
 are retained under `data/gamus/splits/`; raw imagery and full prediction arrays

@@ -133,20 +133,28 @@ class InferenceService:
                 else 0.0
             )
 
+        # Monotonically normalized scale-agnostic relative surface in [0, 1]
+        # Larger value = higher elevation (closer to nadir overhead sensor).
+        d_min = float(np.min(dav2_prior))
+        d_max = float(np.max(dav2_prior))
+        d_range = max(d_max - d_min, 1e-6)
+        relative_surface = ((dav2_prior - d_min) / d_range).astype(np.float32)
+
         total_time = time.time() - t0
         return {
             'predicted_agl_m': predicted_agl,
+            'relative_surface': relative_surface,
             'dav2_prior': dav2_prior,
             'dav2_time_s': dav2_time,
             'm2_time_s': rdah_time,
             'rdah_time_s': rdah_time,
             'ai_time_s': dav2_time + rdah_time,
-            'total_inference_time_s': total_time
-            ,'peak_vram_mb': peak_vram_mb
-            ,'window_count': len(positions_y) * len(positions_x)
-            ,'window_size_px': self.crop_size
-            ,'window_step_px': self.step_size
-            ,'blend': 'Hanning weighted with 0.05 boundary floor'
+            'total_inference_time_s': total_time,
+            'peak_vram_mb': peak_vram_mb,
+            'window_count': len(positions_y) * len(positions_x),
+            'window_size_px': self.crop_size,
+            'window_step_px': self.step_size,
+            'blend': 'Hanning weighted with 0.05 boundary floor'
         }
 
 inference_service = InferenceService()

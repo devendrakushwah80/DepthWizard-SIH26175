@@ -157,6 +157,7 @@ class JobService:
             )
             infer_result = inference_service.predict_height_map(rgb_arr)
             predicted_agl = infer_result["predicted_agl_m"]
+            relative_surface = infer_result.get("relative_surface")
 
             self.update_job(
                 job_id,
@@ -166,22 +167,43 @@ class JobService:
             )
             geospatial_start = time.perf_counter()
             base_dem = None
+            dem_provenance = None
             if dem_file_path:
                 dsm_result = geospatial_service.align_and_compute_dsm(
                     predicted_agl, dem_file_path, spatial_meta
                 )
                 base_dem = dsm_result["base_dem"]
+                dem_provenance = dsm_result.get("dem_provenance")
+                abs_dsm = dsm_result["absolute_dsm"]
+                # Strict numerical identity guarantee on valid DEM pixels:
+                # absolute_dsm - base_dem == predicted_agl
+                valid_mask = np.isfinite(abs_dsm) & np.isfinite(base_dem)
+                if np.any(valid_mask):
+                    np.testing.assert_allclose(
+                        abs_dsm[valid_mask] - base_dem[valid_mask],
+                        predicted_agl[valid_mask],
+                        atol=1e-4,
+                        err_msg="Absolute DSM numeric identity violated: absolute_dsm - base_dem != predicted_agl",
+                    )
 
             scene_dir = scene_service.get_scene_dir(scene_id)
             raster_dir = os.path.join(scene_dir, "rasters")
             os.makedirs(raster_dir, exist_ok=True)
             if spatial_meta.get("is_georeferenced"):
+                # 1. Export predicted AGL GeoTIFF
                 geospatial_service.export_geotiff(
                     predicted_agl,
                     os.path.join(raster_dir, "predicted_agl.tif"),
                     spatial_meta,
                 )
                 if base_dem is not None:
+                    # 2. Export aligned terrain DEM GeoTIFF
+                    geospatial_service.export_geotiff(
+                        base_dem,
+                        os.path.join(raster_dir, "aligned_terrain_dem.tif"),
+                        spatial_meta,
+                    )
+                    # 3. Export absolute DSM GeoTIFF
                     geospatial_service.export_geotiff(
                         base_dem + predicted_agl,
                         os.path.join(raster_dir, "absolute_dsm.tif"),
@@ -214,6 +236,8 @@ class JobService:
                 predicted_agl=predicted_agl,
                 spatial_meta=spatial_meta,
                 base_dem=base_dem,
+                relative_surface=relative_surface,
+                dem_provenance=dem_provenance,
                 generate_3d=generate_3d,
                 generate_pointcloud=generate_pointcloud,
                 mesh_resolution=mesh_resolution,

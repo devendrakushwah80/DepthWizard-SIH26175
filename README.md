@@ -79,6 +79,10 @@ The frontend opens at `http://localhost:3000`; API documentation is available at
 To configure CPU mode or custom storage/model locations, copy `.env.example` and
 set the corresponding `DEPTHWIZARD_*` environment variables before launching.
 
+### Docker support
+
+Container configuration included; build not validated in this release.
+
 ## Validation
 
 ```powershell

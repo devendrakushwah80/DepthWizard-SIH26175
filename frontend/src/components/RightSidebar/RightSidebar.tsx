@@ -395,13 +395,53 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   {isGeo ? 'Yes' : 'No'}
                 </span>
               </div>
-              <div className="flex justify-between py-1">
+              <div className="flex justify-between py-1 border-b border-slate-900">
                 <span className="text-slate-500">Absolute DSM Status:</span>
                 <span className={products.absolute_dsm_tif ? 'text-emerald-400' : 'text-amber-400'}>
                   {products.absolute_dsm_tif ? 'Calculated (Base DEM Aligned)' : 'Unavailable (No DEM)'}
                 </span>
               </div>
             </div>
+
+            {/* DEM Provenance Card (when terrain DEM is loaded) */}
+            {metadata.dem_provenance && (
+              <div className="pt-2 border-t border-slate-800 space-y-2">
+                <span className="font-semibold text-emerald-300 block text-xs">
+                  Terrain DEM Provenance
+                </span>
+                <div className="space-y-1.5 font-mono text-[10px] text-slate-300 bg-slate-900 p-2 rounded border border-slate-800">
+                  <div className="flex justify-between py-0.5 border-b border-slate-800/60">
+                    <span className="text-slate-400">DEM Source:</span>
+                    <span className="truncate max-w-[150px]" title={metadata.dem_provenance.source_dem_filename}>
+                      {metadata.dem_provenance.source_dem_filename}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-slate-800/60">
+                    <span className="text-slate-400">Original CRS:</span>
+                    <span>{metadata.dem_provenance.original_crs}</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-slate-800/60">
+                    <span className="text-slate-400">Original Resolution:</span>
+                    <span>{metadata.dem_provenance.original_resolution?.map(r => r.toFixed(1)).join(' × ')} m</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-slate-800/60">
+                    <span className="text-slate-400">Resampling:</span>
+                    <span>{metadata.dem_provenance.resampling_method}</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-slate-800/60">
+                    <span className="text-slate-400">Spatial Coverage:</span>
+                    <span className="text-emerald-400 font-bold">{metadata.dem_provenance.coverage_pct.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-slate-800/60">
+                    <span className="text-slate-400">Vertical Datum:</span>
+                    <span className="text-amber-400">{metadata.dem_provenance.vertical_datum_status}</span>
+                  </div>
+                  <div className="text-[9px] text-slate-400 pt-1 italic">
+                    {metadata.dem_provenance.datum_disclaimer}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -414,9 +454,26 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
               </span>
 
               <div className="space-y-2">
-                {/* Predicted AGL raster */}
+                {/* 1. Relative Surface Product */}
+                {products.relative_surface_npy && (
+                  <a
+                    href={getDownloadUrl(metadata.scene_id, 'relative_surface.npy')}
+                    download
+                    className="flex items-center justify-between p-2.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 transition-colors"
+                  >
+                    <div>
+                      <span className="font-semibold block text-indigo-300">
+                        Relative Surface / rDSM (.npy)
+                      </span>
+                      <span className="text-[10px] text-slate-400">Non-metric, scale-agnostic monocular prior [0, 1]</span>
+                    </div>
+                    <Download className="w-4 h-4 text-indigo-400" />
+                  </a>
+                )}
+
+                {/* 2. Predicted AGL raster */}
                 <a
-                  href={getDownloadUrl(metadata.scene_id, products.predicted_agl_tif ? 'agl.tif' : 'predicted_agl.npy')}
+                  href={getDownloadUrl(metadata.scene_id, products.predicted_agl_tif ? 'predicted_agl.tif' : 'predicted_agl.npy')}
                   download
                   className="flex items-center justify-between p-2.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 transition-colors"
                 >
@@ -429,16 +486,31 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   <Download className="w-4 h-4 text-cyan-400" />
                 </a>
 
-                {/* Absolute DSM GeoTIFF */}
+                {/* 3. Aligned Terrain DEM GeoTIFF (when DEM loaded) */}
+                {products.aligned_terrain_dem_tif && (
+                  <a
+                    href={getDownloadUrl(metadata.scene_id, 'aligned_terrain_dem.tif')}
+                    download
+                    className="flex items-center justify-between p-2.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 transition-colors"
+                  >
+                    <div>
+                      <span className="font-semibold block text-emerald-300">Aligned Terrain DEM GeoTIFF (.tif)</span>
+                      <span className="text-[10px] text-slate-400">Resampled base elevation grid (metres)</span>
+                    </div>
+                    <Download className="w-4 h-4 text-emerald-400" />
+                  </a>
+                )}
+
+                {/* 4. Absolute DSM GeoTIFF */}
                 {products.absolute_dsm_tif ? (
                   <a
-                    href={getDownloadUrl(metadata.scene_id, 'dsm.tif')}
+                    href={getDownloadUrl(metadata.scene_id, 'absolute_dsm.tif')}
                     download
                     className="flex items-center justify-between p-2.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 transition-colors"
                   >
                     <div>
                       <span className="font-semibold block text-emerald-300">Absolute DSM GeoTIFF (.tif)</span>
-                      <span className="text-[10px] text-slate-400">Base DEM + Predicted AGL</span>
+                      <span className="text-[10px] text-slate-400">Aligned DEM + Predicted AGL (metres)</span>
                     </div>
                     <Download className="w-4 h-4 text-emerald-400" />
                   </a>
@@ -452,18 +524,48 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </div>
                 )}
 
-                {/* 3D GLB Model */}
+                {/* 3D GLB Model (Relative Surface) */}
+                {products.mesh_relative_glb && (
+                  <a
+                    href={getDownloadUrl(metadata.scene_id, 'scene_relative.glb')}
+                    download
+                    className="flex items-center justify-between p-2.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 transition-colors"
+                  >
+                    <div>
+                      <span className="font-semibold block text-indigo-200">Relative Surface Mesh (.glb)</span>
+                      <span className="text-[10px] text-slate-400">Normalized scale-agnostic 3D geometry</span>
+                    </div>
+                    <Download className="w-4 h-4 text-indigo-400" />
+                  </a>
+                )}
+
+                {/* 3D GLB Model (Predicted AGL) */}
                 <a
-                  href={getDownloadUrl(metadata.scene_id, 'mesh.glb')}
+                  href={getDownloadUrl(metadata.scene_id, 'scene_agl.glb')}
                   download
                   className="flex items-center justify-between p-2.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 transition-colors"
                 >
                   <div>
-                    <span className="font-semibold block text-slate-200">3D Surface Mesh (.glb)</span>
-                    <span className="text-[10px] text-slate-400">GLTF 2.0 Binary, Textured & Skirted</span>
+                    <span className="font-semibold block text-slate-200">Predicted AGL Surface Mesh (.glb)</span>
+                    <span className="text-[10px] text-slate-400">1:1 Physical Metric scale, Textured & Skirted</span>
                   </div>
                   <Download className="w-4 h-4 text-cyan-400" />
                 </a>
+
+                {/* 3D GLB Model (Absolute DSM) */}
+                {products.mesh_absolute_dsm_glb && (
+                  <a
+                    href={getDownloadUrl(metadata.scene_id, 'scene_absolute_dsm.glb')}
+                    download
+                    className="flex items-center justify-between p-2.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 transition-colors"
+                  >
+                    <div>
+                      <span className="font-semibold block text-emerald-200">Absolute DSM Surface Mesh (.glb)</span>
+                      <span className="text-[10px] text-slate-400">Aligned DEM + AGL elevation surface</span>
+                    </div>
+                    <Download className="w-4 h-4 text-emerald-400" />
+                  </a>
+                )}
 
                 {/* Dense PLY Point Cloud */}
                 <a

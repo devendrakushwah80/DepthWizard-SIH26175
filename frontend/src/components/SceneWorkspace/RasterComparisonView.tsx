@@ -12,8 +12,8 @@ import { getTextureUrl } from '../../api/scenes';
 
 interface RasterComparisonViewProps {
   metadata: SceneMetadataResponse | null;
-  activeLayer: 'heightmap' | 'slope' | 'semantic';
-  onChangeLayer: (layer: 'heightmap' | 'slope' | 'semantic') => void;
+  activeLayer: 'heightmap' | 'relative_surface' | 'slope' | 'semantic';
+  onChangeLayer: (layer: 'heightmap' | 'relative_surface' | 'slope' | 'semantic') => void;
   onInspectPixel: (u: number, v: number) => void;
   inspectPixelCoord: [number, number] | null;
   activeTool: 'inspect' | 'measure' | 'none';
@@ -53,7 +53,14 @@ export const RasterComparisonView: React.FC<RasterComparisonViewProps> = ({
   }
 
   const rgbUrl = getTextureUrl(metadata.scene_id, 'rgb');
-  const rightLayerUrl = getTextureUrl(metadata.scene_id, activeLayer === 'heightmap' ? 'heightmap' : 'slope');
+  const rightLayerUrl = getTextureUrl(
+    metadata.scene_id,
+    activeLayer === 'relative_surface'
+      ? 'relative_surface'
+      : activeLayer === 'slope'
+      ? 'slope'
+      : 'heightmap'
+  );
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button === 0 && !e.shiftKey) {
@@ -131,18 +138,32 @@ export const RasterComparisonView: React.FC<RasterComparisonViewProps> = ({
           <div className="flex bg-slate-950 p-0.5 rounded border border-slate-800">
             <button
               onClick={() => onChangeLayer('heightmap')}
+              title="Predicted AGL / nDSM: AI-estimated height above local ground in metres"
               className={`px-2.5 py-0.5 rounded font-medium transition-colors ${
                 activeLayer === 'heightmap'
                   ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Predicted Height (AGL)
+              Predicted AGL
             </button>
+            {metadata.products.texture_relative_surface && (
+              <button
+                onClick={() => onChangeLayer('relative_surface')}
+                title="Relative Surface / rDSM: Scale-agnostic monocular geometry derived from DAV2 prior (non-metric [0, 1])"
+                className={`px-2.5 py-0.5 rounded font-medium transition-colors ${
+                  activeLayer === 'relative_surface'
+                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Relative Surface
+              </button>
+            )}
             <button
               onClick={() => onChangeLayer('slope')}
               disabled={!slopeAvailable}
-              title={slopeAvailable ? 'Physical slope map' : 'GSD unavailable: slope disabled'}
+              title={slopeAvailable ? 'Physical slope map (degrees)' : 'GSD unavailable: slope disabled'}
               className={`px-2.5 py-0.5 rounded font-medium transition-colors ${
                 !slopeAvailable
                   ? 'text-slate-700 cursor-not-allowed'
@@ -260,7 +281,11 @@ export const RasterComparisonView: React.FC<RasterComparisonViewProps> = ({
             {/* Right: Predicted Height Heatmap / Slope */}
             <div className="relative border border-slate-700 bg-slate-900 rounded overflow-hidden shadow-xl">
               <div className="absolute top-2 left-2 z-10 bg-slate-950/80 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-mono text-cyan-300 border border-slate-700">
-                {activeLayer === 'heightmap' ? 'Predicted AGL Height (Turbo Colormap)' : 'Slope Map (Magma)'}
+                {activeLayer === 'relative_surface'
+                  ? 'Relative Surface / rDSM (Non-metric [0, 1])'
+                  : activeLayer === 'heightmap'
+                  ? 'Predicted AGL Height (Turbo Colormap, metres)'
+                  : 'Slope Map (Magma, degrees)'}
               </div>
               <img
                 src={rightLayerUrl}
@@ -338,6 +363,24 @@ export const RasterComparisonView: React.FC<RasterComparisonViewProps> = ({
               <span>{(maxAgM / 2).toFixed(0)} m</span>
               <span>{maxAgM.toFixed(0)} m (Peak)</span>
             </div>
+          </div>
+        )}
+
+        {activeLayer === 'relative_surface' && (
+          <div className="absolute bottom-4 left-4 z-20 bg-slate-900/90 backdrop-blur-md p-2.5 rounded-md border border-slate-800 shadow-xl text-xs space-y-1.5 w-64">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="font-semibold text-slate-300">Relative Surface / rDSM</span>
+              <span className="font-mono text-indigo-400 text-[10px] font-bold">Non-metric [0, 1]</span>
+            </div>
+            <div className="h-3 w-full rounded overflow-hidden bg-gradient-to-r from-[#30123b] via-[#28bbec] via-[#a2fc3c] via-[#fb8022] to-[#7a0403] border border-slate-700" />
+            <div className="flex justify-between text-[10px] font-mono text-slate-400">
+              <span>0.0 (Base)</span>
+              <span>0.5</span>
+              <span>1.0 (Peak)</span>
+            </div>
+            <p className="text-[9px] text-slate-400 italic">
+              DAV2 monocular depth prior. Scale-agnostic relative relief without physical units.
+            </p>
           </div>
         )}
 

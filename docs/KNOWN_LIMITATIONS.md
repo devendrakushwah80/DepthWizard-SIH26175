@@ -41,3 +41,10 @@
 
 * **Description:** The GAMUS training and validation dataset covers urban/suburban coastal cities (Philadelphia, Washington DC, New York City).
 * **Current Mitigation:** Hilly and Dense Wild Forest categories are explicitly designated `NOT VALIDATED` in compliance with scientific integrity rules.
+
+---
+
+## 6. Monocular Relative Surface vs Metric Height
+
+* **Description:** The Relative Surface ($r\text{DSM}$) extracted from the frozen Depth Anything V2 prior provides scale-agnostic monocular relief cues. It has no physical metric scale, datum, or vertical calibration.
+* **Current Mitigation:** DepthWizard strictly decouples the Relative Surface from metric Predicted AGL ($n\text{DSM}$) and Absolute DSM. Relative Surface visualizations are normalized to $[0, 1]$ and never displayed with metric metre units or elevation claims.

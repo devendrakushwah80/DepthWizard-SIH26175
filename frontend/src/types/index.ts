@@ -68,14 +68,19 @@ export interface HeightStatistics {
 export interface SceneProducts {
   predicted_agl_npy: boolean;
   predicted_agl_tif: boolean;
+  relative_surface_npy?: boolean;
+  relative_surface_png?: boolean;
+  aligned_terrain_dem_tif?: boolean;
   absolute_dsm_tif: boolean;
   mesh_glb: boolean;
   mesh_agl_glb?: boolean;
+  mesh_relative_glb?: boolean;
   mesh_absolute_dsm_glb?: boolean;
   mesh_obj: boolean;
   pointcloud_ply: boolean;
   texture_rgb: boolean;
   texture_height_heatmap: boolean;
+  texture_relative_surface?: boolean;
   texture_semantic: boolean;
   texture_slope_heatmap: boolean;
 }
@@ -83,14 +88,19 @@ export interface SceneProducts {
 export interface SceneArtifacts {
   predicted_agl_npy?: string;
   predicted_agl_tif?: string | null;
+  relative_surface_npy?: string | null;
+  relative_surface_png?: string | null;
+  aligned_terrain_dem_tif?: string | null;
   absolute_dsm_tif?: string | null;
   mesh_glb: string | null;
   mesh_agl_glb?: string | null;
+  mesh_relative_glb?: string | null;
   mesh_absolute_dsm_glb?: string | null;
   pointcloud_ply: string | null;
   metadata: string;
   texture_rgb: string;
   heightmap: string;
+  relative_surface?: string | null;
   slope: string | null;
 }
 
@@ -118,6 +128,19 @@ export interface SceneMetadataResponse {
     dav2_model_id: string;
     dav2_frozen: boolean;
   };
+  dem_provenance?: {
+    source_dem_filename: string;
+    original_crs: string;
+    original_resolution: number[];
+    original_bounds: Record<string, number>;
+    target_crs: string;
+    target_resolution: number[];
+    resampling_method: string;
+    coverage_pct: number;
+    nodata_pixels_filled: number;
+    vertical_datum_status: string;
+    datum_disclaimer: string;
+  } | null;
   output_semantics?: {
     primary: string;
     vertical_unit: string;
@@ -133,6 +156,8 @@ export interface SceneMetadataResponse {
   artifact_sizes_bytes?: Record<string, number>;
   warnings?: string[];
   mesh_info?: Record<string, unknown>;
+  relative_surface_mesh_info?: Record<string, unknown>;
+  absolute_surface_mesh_info?: Record<string, unknown>;
   pointcloud_info?: Record<string, unknown>;
 }
 

@@ -37,14 +37,19 @@ class HeightStatistics(BaseModel):
 class SceneProducts(BaseModel):
     predicted_agl_npy: bool = True
     predicted_agl_tif: bool = False
+    relative_surface_npy: bool = False
+    relative_surface_png: bool = False
+    aligned_terrain_dem_tif: bool = False
     absolute_dsm_tif: bool = False
     mesh_glb: bool = True
     mesh_agl_glb: bool = False
+    mesh_relative_glb: bool = False
     mesh_absolute_dsm_glb: bool = False
     mesh_obj: bool = True
     pointcloud_ply: bool = True
     texture_rgb: bool = True
     texture_height_heatmap: bool = True
+    texture_relative_surface: bool = False
     texture_semantic: bool = False
     texture_slope_heatmap: bool = True
 
@@ -60,12 +65,15 @@ class SceneMetadataResponse(BaseModel):
     products: SceneProducts
     artifacts: Dict[str, Optional[str]]
     model: Optional[Dict[str, Any]] = None
+    dem_provenance: Optional[Dict[str, Any]] = None
     output_semantics: Optional[Dict[str, Any]] = None
     processing_timings: Dict[str, float] = Field(default_factory=dict)
     peak_vram_mb: float = 0.0
     artifact_sizes_bytes: Dict[str, int] = Field(default_factory=dict)
     warnings: List[str] = Field(default_factory=list)
     mesh_info: Dict[str, Any] = Field(default_factory=dict)
+    relative_surface_mesh_info: Optional[Dict[str, Any]] = None
+    absolute_surface_mesh_info: Optional[Dict[str, Any]] = None
     pointcloud_info: Dict[str, Any] = Field(default_factory=dict)
 
 class SceneListItem(BaseModel):

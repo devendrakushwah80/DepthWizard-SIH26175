@@ -35,6 +35,7 @@ def _deterministic_inference(rgb: np.ndarray) -> dict:
     return {
         "predicted_agl_m": agl,
         "dav2_prior": np.zeros_like(agl),
+        "relative_surface": (agl / np.max(agl)).astype(np.float32),
         "dav2_time_s": 0.0,
         "m2_time_s": 0.0,
         "ai_time_s": 0.0,
@@ -85,6 +86,7 @@ def isolated_runtime(tmp_path_factory):
         scene_id="NYC_00735",
         rgb_image=rgb,
         predicted_agl=agl,
+        relative_surface=(agl / np.max(agl)).astype(np.float32),
         spatial_meta={
             "format": "PNG",
             "is_georeferenced": False,
