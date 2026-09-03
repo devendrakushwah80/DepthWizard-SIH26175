@@ -1,0 +1,73 @@
+{
+  "overall_status": "PASS",
+  "rgb_uv_orientation_overall": "PASS",
+  "height_raster_consistency_overall": "PASS",
+  "repair_records": [],
+  "scenes": {
+    "NYC_00735": {
+      "status": "PASS",
+      "rgb_uv_orientation_status": "PASS",
+      "height_raster_consistency_status": "PASS",
+      "report": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_00735\\registration_report.json",
+      "screenshots": {
+        "composite": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_00735\\top_view_registration.png",
+        "orthographic_top": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_00735\\orthographic_top_rgb_contours.png"
+      },
+      "uv_detected": "gltf_upper_left",
+      "height_normal_max_abs_m": 0.0,
+      "texture_normal_mae": 0.48137983679771423
+    },
+    "NYC_01086": {
+      "status": "PASS",
+      "rgb_uv_orientation_status": "PASS",
+      "height_raster_consistency_status": "PASS",
+      "report": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01086\\registration_report.json",
+      "screenshots": {
+        "composite": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01086\\top_view_registration.png",
+        "orthographic_top": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01086\\orthographic_top_rgb_contours.png"
+      },
+      "uv_detected": "gltf_upper_left",
+      "height_normal_max_abs_m": 0.0,
+      "texture_normal_mae": 0.4314053952693939
+    },
+    "NYC_01103": {
+      "status": "PASS",
+      "rgb_uv_orientation_status": "PASS",
+      "height_raster_consistency_status": "PASS",
+      "report": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01103\\registration_report.json",
+      "screenshots": {
+        "composite": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01103\\top_view_registration.png",
+        "orthographic_top": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01103\\orthographic_top_rgb_contours.png"
+      },
+      "uv_detected": "gltf_upper_left",
+      "height_normal_max_abs_m": 0.0,
+      "texture_normal_mae": 0.46791043877601624
+    },
+    "NYC_01270": {
+      "status": "PASS",
+      "rgb_uv_orientation_status": "PASS",
+      "height_raster_consistency_status": "PASS",
+      "report": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01270\\registration_report.json",
+      "screenshots": {
+        "composite": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01270\\top_view_registration.png",
+        "orthographic_top": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\NYC_01270\\orthographic_top_rgb_contours.png"
+      },
+      "uv_detected": "gltf_upper_left",
+      "height_normal_max_abs_m": 0.0,
+      "texture_normal_mae": 0.4636363983154297
+    },
+    "scene_22099217": {
+      "status": "PASS",
+      "rgb_uv_orientation_status": "PASS",
+      "height_raster_consistency_status": "PASS",
+      "report": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\scene_22099217\\registration_report.json",
+      "screenshots": {
+        "composite": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\scene_22099217\\top_view_registration.png",
+        "orthographic_top": "C:\\DepthWizard-SIH26175\\outputs\\registration_audit\\after_legacy_regeneration\\scene_22099217\\orthographic_top_rgb_contours.png"
+      },
+      "uv_detected": "gltf_upper_left",
+      "height_normal_max_abs_m": 0.0,
+      "texture_normal_mae": 1.6964083909988403
+    }
+  }
+}

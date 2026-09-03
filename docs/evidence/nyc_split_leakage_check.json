@@ -1,0 +1,14 @@
+{
+  "target_manifest": "data/gamus/splits/nyc_unseen_500_test.txt",
+  "nyc_pool_size": 1000,
+  "nyc_sample_count": 500,
+  "nyc_unique_count": 500,
+  "train_overlap_count": 0,
+  "val_overlap_count": 0,
+  "duplicate_ids_count": 0,
+  "sample_prefix_cities": [
+    "NYC"
+  ],
+  "data_leakage_count": 0,
+  "verdict": "DATA LEAKAGE: 0"
+}

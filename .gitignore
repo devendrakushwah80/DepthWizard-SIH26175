@@ -1,0 +1,80 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local environments and credentials
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+
+# Node / frontend build output
+node_modules/
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs and local process state
+*.log
+*.pid
+*.tmp
+*.bak
+*.old
+
+# Runtime-generated products
+outputs/**
+!outputs/.gitkeep
+
+# Downloaded datasets, caches, and geospatial rasters
+data/raw/
+data/gamus/dataset/
+data/gamus/cache_dav2/
+data/gamus/samples/
+data/gamus/metadata/
+data/srtm/
+datasets/
+training_cache/
+cache/
+.cache/
+*.h5
+*.hdf5
+*.tif
+*.tiff
+*.npy
+*.npz
+
+# Checkpoints are ignored by default; the verified production checkpoint is
+# intentionally distributed because it is below GitHub's single-file limit.
+*.pth
+!models/m2_final/M2_FINAL.pth
+
+# Browser/debug artifacts
+chrome-profile/
+playwright-report/
+test-results/
+screenshots/
+
+# Legacy standalone viewer and generated demo scenes
+visualization/

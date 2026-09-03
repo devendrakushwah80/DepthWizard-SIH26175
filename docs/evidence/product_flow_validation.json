@@ -1,0 +1,965 @@
+{
+  "test_name": "SIH26175 projection, AGL/DSM surface, and viewer flow audit",
+  "scientific_scope": "presentation and derived GLB validation only; no training or prediction mutation",
+  "health": {
+    "status": "ok",
+    "model_name": "M2-FINAL + Frozen Depth Anything V2 Small",
+    "checkpoint_sha256_verified": true
+  },
+  "checkpoint_sha256_before": "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+  "checkpoint_sha256_after": "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+  "checkpoint_unchanged": true,
+  "coordinate_convention": {
+    "raster_to_world": "u left-to-right maps -X to +X; v top-to-bottom maps +Z to -Z",
+    "gltf_uv": "U=u/(W-1), V=v/(H-1), glTF upper-left texture convention",
+    "top_screen_orientation": "screen top is world +Z, therefore raster row v=0/image top"
+  },
+  "physical_vs_display": {
+    "artifact_geometry": "always physical 1x",
+    "display_exaggeration": "Three.js object Y scale about physical mesh baseline only",
+    "inspection_ruler_and_exports": "read authoritative 1x rasters and ignore display scale"
+  },
+  "cases": {
+    "NYC_00735": {
+      "status": "PASS",
+      "input_format": "HDF5 / Optical RGB",
+      "is_georeferenced": true,
+      "gsd_m": 0.5,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": false,
+      "dem_present": false,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        511.5,
+        511.5
+      ],
+      "top_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_height_center_observed_pixel": [
+        512,
+        512
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.165695,
+        "rgb_std": 39.145676
+      },
+      "physical_height_range_m": 8.234118461608887,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "3d06f41114dbe2b0fb2cb0074624db01584efce9f74fa7c9c4f10a600a4ece5d",
+        "size_bytes": 10435940
+      },
+      "absolute_dsm_glb": {
+        "status_code": 404,
+        "sha256": null,
+        "size_bytes": 165
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": {
+        "captured_in_fly": true,
+        "display_scale": "5",
+        "projection_restored": true
+      },
+      "inspection": {
+        "scene_id": "NYC_00735",
+        "pixel": [
+          512,
+          512
+        ],
+        "predicted_agl_m": 1.4394254684448242,
+        "absolute_elevation_m": null,
+        "semantic_class": null,
+        "slope_deg": null,
+        "world_coordinates_m": {
+          "x": 0.0,
+          "z": 0.0
+        },
+        "is_georeferenced": true,
+        "warnings": []
+      },
+      "measurement": {
+        "scene_id": "NYC_00735",
+        "horizontal_distance_m": 362.03867196751236,
+        "direct_3d_distance_m": 362.03867198706655,
+        "elevation_delta_m": 0.0037628114223480225,
+        "slope_angle_deg": 0.000595497747311766,
+        "start_elevation_m": 0.25154659152030945,
+        "end_elevation_m": 0.25530940294265747,
+        "warnings": []
+      },
+      "predicted_agl_sha256_before": "8cd7d76fdcbbc1ef0a583cd699c90703369ff6c481d3ba5ed1e2e9c12b3570f9",
+      "predicted_agl_sha256_after": "8cd7d76fdcbbc1ef0a583cd699c90703369ff6c481d3ba5ed1e2e9c12b3570f9",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_00735_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    },
+    "NYC_01086": {
+      "status": "PASS",
+      "input_format": "HDF5 / Optical RGB",
+      "is_georeferenced": true,
+      "gsd_m": 0.5,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": false,
+      "dem_present": false,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        511.5,
+        511.5
+      ],
+      "top_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_height_center_observed_pixel": [
+        512,
+        512
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.165685,
+        "rgb_std": 51.145531
+      },
+      "physical_height_range_m": 12.52745532989502,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "f836705826eb3eb46065301547ba4276c776cf8efdabc708015a057345a1827e",
+        "size_bytes": 9876336
+      },
+      "absolute_dsm_glb": {
+        "status_code": 404,
+        "sha256": null,
+        "size_bytes": 165
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": null,
+      "inspection": {
+        "scene_id": "NYC_01086",
+        "pixel": [
+          512,
+          512
+        ],
+        "predicted_agl_m": 0.2230740338563919,
+        "absolute_elevation_m": null,
+        "semantic_class": null,
+        "slope_deg": null,
+        "world_coordinates_m": {
+          "x": 0.0,
+          "z": 0.0
+        },
+        "is_georeferenced": true,
+        "warnings": []
+      },
+      "measurement": {
+        "scene_id": "NYC_01086",
+        "horizontal_distance_m": 362.03867196751236,
+        "direct_3d_distance_m": 362.03867295383236,
+        "elevation_delta_m": -0.026723995804786682,
+        "slope_angle_deg": 0.004229305560749679,
+        "start_elevation_m": 0.2513103485107422,
+        "end_elevation_m": 0.2245863527059555,
+        "warnings": []
+      },
+      "predicted_agl_sha256_before": "88d5b379914b7048052a191980e4349fa9093d1341023d7d30b466ae2879bae8",
+      "predicted_agl_sha256_after": "88d5b379914b7048052a191980e4349fa9093d1341023d7d30b466ae2879bae8",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_01086_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    },
+    "NYC_01103": {
+      "status": "PASS",
+      "input_format": "HDF5 / Optical RGB",
+      "is_georeferenced": true,
+      "gsd_m": 0.5,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": false,
+      "dem_present": false,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        511.5,
+        511.5
+      ],
+      "top_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_height_center_observed_pixel": [
+        512,
+        512
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.164231,
+        "rgb_std": 43.337521
+      },
+      "physical_height_range_m": 7.395249366760254,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "f37b6a46035c2536969edb845b63065bddc088e8e9a6799ac961a83a63adcfec",
+        "size_bytes": 10318376
+      },
+      "absolute_dsm_glb": {
+        "status_code": 404,
+        "sha256": null,
+        "size_bytes": 165
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": null,
+      "inspection": {
+        "scene_id": "NYC_01103",
+        "pixel": [
+          512,
+          512
+        ],
+        "predicted_agl_m": 3.022003173828125,
+        "absolute_elevation_m": null,
+        "semantic_class": null,
+        "slope_deg": null,
+        "world_coordinates_m": {
+          "x": 0.0,
+          "z": 0.0
+        },
+        "is_georeferenced": true,
+        "warnings": []
+      },
+      "measurement": {
+        "scene_id": "NYC_01103",
+        "horizontal_distance_m": 362.03867196751236,
+        "direct_3d_distance_m": 362.03867394769355,
+        "elevation_delta_m": -0.03786560893058777,
+        "slope_angle_deg": 0.005992563061603913,
+        "start_elevation_m": 0.23952700197696686,
+        "end_elevation_m": 0.2016613930463791,
+        "warnings": []
+      },
+      "predicted_agl_sha256_before": "d4fb947e46d7433a4550d2b149b1a7d96d337644c8fbe881d037eb3b595a4cf9",
+      "predicted_agl_sha256_after": "d4fb947e46d7433a4550d2b149b1a7d96d337644c8fbe881d037eb3b595a4cf9",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_01103_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    },
+    "NYC_01270": {
+      "status": "PASS",
+      "input_format": "HDF5 / Optical RGB",
+      "is_georeferenced": true,
+      "gsd_m": 0.5,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": false,
+      "dem_present": false,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        511.5,
+        511.5
+      ],
+      "top_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_height_center_observed_pixel": [
+        512,
+        512
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.164405,
+        "rgb_std": 35.789471
+      },
+      "physical_height_range_m": 2.339869976043701,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "6fbb4f7b03aaa6641e60e0ffcbad49b33ae9d2995830a332b03800a715126c84",
+        "size_bytes": 10041056
+      },
+      "absolute_dsm_glb": {
+        "status_code": 404,
+        "sha256": null,
+        "size_bytes": 165
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": null,
+      "inspection": {
+        "scene_id": "NYC_01270",
+        "pixel": [
+          512,
+          512
+        ],
+        "predicted_agl_m": 0.23886936902999878,
+        "absolute_elevation_m": null,
+        "semantic_class": null,
+        "slope_deg": null,
+        "world_coordinates_m": {
+          "x": 0.0,
+          "z": 0.0
+        },
+        "is_georeferenced": true,
+        "warnings": []
+      },
+      "measurement": {
+        "scene_id": "NYC_01270",
+        "horizontal_distance_m": 362.03867196751236,
+        "direct_3d_distance_m": 362.03867198478946,
+        "elevation_delta_m": 0.0035369396209716797,
+        "slope_angle_deg": 0.000559751563462856,
+        "start_elevation_m": 0.2501959502696991,
+        "end_elevation_m": 0.2537328898906708,
+        "warnings": []
+      },
+      "predicted_agl_sha256_before": "b644c4af4769ebd9eae3e78e45f5101ac186a1f8198c089bd64fa15b40cf755d",
+      "predicted_agl_sha256_after": "b644c4af4769ebd9eae3e78e45f5101ac186a1f8198c089bd64fa15b40cf755d",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_01270_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    },
+    "scene_22099217": {
+      "status": "PASS",
+      "input_format": "RGB Image",
+      "is_georeferenced": false,
+      "gsd_m": null,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": false,
+      "dem_present": false,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        510.0,
+        313.5
+      ],
+      "top_center_observed_pixel": [
+        510,
+        314
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        510,
+        314
+      ],
+      "two_d_height_center_observed_pixel": [
+        510,
+        314
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.111445,
+        "rgb_std": 24.1716
+      },
+      "physical_height_range_m": 43.36581039428711,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "b877a5d93d3f50d09edb485eeaabe00c4fc37dca4cd6dba05850b1e647b12652",
+        "size_bytes": 9233760
+      },
+      "absolute_dsm_glb": {
+        "status_code": 404,
+        "sha256": null,
+        "size_bytes": 165
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": null,
+      "inspection": {
+        "scene_id": "scene_22099217",
+        "pixel": [
+          510,
+          314
+        ],
+        "predicted_agl_m": 13.11424446105957,
+        "absolute_elevation_m": null,
+        "semantic_class": null,
+        "slope_deg": null,
+        "world_coordinates_m": null,
+        "is_georeferenced": false,
+        "warnings": [
+          "GSD unavailable: horizontal metric distance and slope disabled.",
+          "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+        ]
+      },
+      "measurement": null,
+      "predicted_agl_sha256_before": "7a8b562ee23458f3a9d99819787361a2bc3a24c654822e0bec41087982ce3cfc",
+      "predicted_agl_sha256_after": "7a8b562ee23458f3a9d99819787361a2bc3a24c654822e0bec41087982ce3cfc",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\scene_22099217_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    },
+    "sih_demo_upload_png_20260903": {
+      "status": "PASS",
+      "input_format": "RGB Image",
+      "is_georeferenced": false,
+      "gsd_m": null,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": false,
+      "dem_present": false,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        511.5,
+        511.5
+      ],
+      "top_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        512,
+        512
+      ],
+      "two_d_height_center_observed_pixel": [
+        512,
+        512
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.137706,
+        "rgb_std": 26.013933
+      },
+      "physical_height_range_m": 27.8107967376709,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "c3f9d0e52cd74f3ddce6dc29f64d64d7f7f3a08d98d3610efa5fa5dfb8ff7ddf",
+        "size_bytes": 10570212
+      },
+      "absolute_dsm_glb": {
+        "status_code": 404,
+        "sha256": null,
+        "size_bytes": 165
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": null,
+      "inspection": {
+        "scene_id": "sih_demo_upload_png_20260903",
+        "pixel": [
+          512,
+          512
+        ],
+        "predicted_agl_m": 7.891934394836426,
+        "absolute_elevation_m": null,
+        "semantic_class": null,
+        "slope_deg": null,
+        "world_coordinates_m": null,
+        "is_georeferenced": false,
+        "warnings": [
+          "GSD unavailable: horizontal metric distance and slope disabled.",
+          "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+        ]
+      },
+      "measurement": null,
+      "predicted_agl_sha256_before": "895bb5b3b98024a916653dc0bb0010459b5f9589c413496bc095b853638eb0a9",
+      "predicted_agl_sha256_after": "895bb5b3b98024a916653dc0bb0010459b5f9589c413496bc095b853638eb0a9",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\sih_demo_upload_png_20260903_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    },
+    "m2int_valid_geotiff_224345": {
+      "status": "PASS",
+      "input_format": "GeoTIFF",
+      "is_georeferenced": true,
+      "gsd_m": 0.5,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": false,
+      "dem_present": false,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        255.5,
+        255.5
+      ],
+      "top_center_observed_pixel": [
+        256,
+        256
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        256,
+        256
+      ],
+      "two_d_height_center_observed_pixel": [
+        256,
+        256
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.152647,
+        "rgb_std": 38.674019
+      },
+      "physical_height_range_m": 16.89051628112793,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "277ce8a9bea0fa1e33c64bc44720a7b13408fd4e18f307d76bf58e0a3b48c1ba",
+        "size_bytes": 4266672
+      },
+      "absolute_dsm_glb": {
+        "status_code": 404,
+        "sha256": null,
+        "size_bytes": 165
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": null,
+      "inspection": {
+        "scene_id": "m2int_valid_geotiff_224345",
+        "pixel": [
+          256,
+          256
+        ],
+        "predicted_agl_m": 0.06686495244503021,
+        "absolute_elevation_m": null,
+        "semantic_class": null,
+        "slope_deg": 0.23842844367027283,
+        "world_coordinates_m": {
+          "x": 0.0,
+          "z": 0.0
+        },
+        "is_georeferenced": true,
+        "warnings": [
+          "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+        ]
+      },
+      "measurement": {
+        "scene_id": "m2int_valid_geotiff_224345",
+        "horizontal_distance_m": 181.01933598375618,
+        "direct_3d_distance_m": 181.6115789345177,
+        "elevation_delta_m": -14.654883250594139,
+        "slope_angle_deg": 4.628432184914168,
+        "start_elevation_m": 14.832551002502441,
+        "end_elevation_m": 0.1776677519083023,
+        "warnings": [
+          "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+        ]
+      },
+      "predicted_agl_sha256_before": "f2921dbaf93c9ccf0b38d1c13464d05d9bcefa2ae006f92b9698d9cde6292063",
+      "predicted_agl_sha256_after": "f2921dbaf93c9ccf0b38d1c13464d05d9bcefa2ae006f92b9698d9cde6292063",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\m2int_valid_geotiff_224345_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    },
+    "m2int_geotiff_aligned_dem_224345": {
+      "status": "PASS",
+      "input_format": "GeoTIFF",
+      "is_georeferenced": true,
+      "gsd_m": 0.5,
+      "primary_output": "predicted_agl_ndsm",
+      "surface_type_tested": "predicted_agl",
+      "absolute_dsm_available": true,
+      "dem_present": true,
+      "projection_modes": {
+        "orthographic_top": "OrthographicCamera",
+        "orthographic_oblique": "OrthographicCamera",
+        "perspective_oblique": "PerspectiveCamera"
+      },
+      "top_center_expected_pixel": [
+        255.5,
+        255.5
+      ],
+      "top_center_observed_pixel": [
+        256,
+        256
+      ],
+      "two_d_rgb_center_observed_pixel": [
+        256,
+        256
+      ],
+      "two_d_height_center_observed_pixel": [
+        256,
+        256
+      ],
+      "rgb_visual_metrics": {
+        "visible": true,
+        "non_background_fraction": 0.152647,
+        "rgb_std": 38.693558
+      },
+      "physical_height_range_m": 16.89051628112793,
+      "height_relief_tested_at_display_5x": true,
+      "agl_glb": {
+        "status_code": 200,
+        "sha256": "b10897d23257073d007e58bb7506c1054b51867abc8d668804363afec4d02dd0",
+        "size_bytes": 4242032
+      },
+      "absolute_dsm_glb": {
+        "status_code": 200,
+        "sha256": "5a99a93afc17a51178d9deef062e10ff1e37b8e53c3596b1e5d565635771d6c1",
+        "size_bytes": 4266672
+      },
+      "fly": {
+        "entered_with_perspective": true,
+        "forward_input_registered": true,
+        "movement": true,
+        "escape_unlocked_in_headless_chrome": false,
+        "exit_event_exercised": true,
+        "restored_previous_projection": true
+      },
+      "explore_fly_capture": null,
+      "inspection": {
+        "scene_id": "m2int_geotiff_aligned_dem_224345",
+        "pixel": [
+          256,
+          256
+        ],
+        "predicted_agl_m": 0.06686495244503021,
+        "absolute_elevation_m": 12.566864967346191,
+        "semantic_class": null,
+        "slope_deg": 0.23842844367027283,
+        "world_coordinates_m": {
+          "x": 0.0,
+          "z": 0.0
+        },
+        "is_georeferenced": true,
+        "warnings": []
+      },
+      "measurement": {
+        "scene_id": "m2int_geotiff_aligned_dem_224345",
+        "horizontal_distance_m": 181.01933598375618,
+        "direct_3d_distance_m": 181.6115789345177,
+        "elevation_delta_m": -14.654883250594139,
+        "slope_angle_deg": 4.628432184914168,
+        "start_elevation_m": 14.832551002502441,
+        "end_elevation_m": 0.1776677519083023,
+        "warnings": []
+      },
+      "predicted_agl_sha256_before": "f2921dbaf93c9ccf0b38d1c13464d05d9bcefa2ae006f92b9698d9cde6292063",
+      "predicted_agl_sha256_after": "f2921dbaf93c9ccf0b38d1c13464d05d9bcefa2ae006f92b9698d9cde6292063",
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\m2int_geotiff_aligned_dem_224345_explore_rgb.png",
+      "checks": {
+        "rgb_texture_loaded": true,
+        "rgb_material_unlit_white_srgb": true,
+        "rgb_visually_present": true,
+        "camera_above_surface": true,
+        "orthographic_top": true,
+        "orthographic_oblique": true,
+        "perspective_oblique": true,
+        "top_center_pixel_consistency": true,
+        "two_d_rgb_center_pixel_consistency": true,
+        "two_d_height_center_pixel_consistency": true,
+        "two_d_to_three_d_click_consistency": true,
+        "orbit": true,
+        "fly_forces_perspective": true,
+        "fly_forward_input_registered": true,
+        "fly_restores_projection": true,
+        "analysis_defaults": true,
+        "explore_defaults": true,
+        "authoritative_scale_is_1x": true,
+        "inspection_unchanged_by_display_scale": true,
+        "ruler_unchanged_by_display_scale": true,
+        "agl_glb_available": true,
+        "absolute_glb_availability_correct": true,
+        "surface_selector_availability_correct": true,
+        "absolute_surface_loads_when_available": true,
+        "dsm_equals_dem_plus_agl": true,
+        "terminology_and_flow": true,
+        "natural_scene_caution": true,
+        "agl_raster_unchanged": true,
+        "agl_glb_unchanged_by_ui": true
+      }
+    }
+  },
+  "screenshots": {
+    "orthographic_top": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_00735_orthographic_top.png",
+    "orthographic_oblique": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_00735_orthographic_oblique.png",
+    "perspective_oblique": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_00735_perspective_oblique.png",
+    "perspective_fly": "C:\\DepthWizard-SIH26175\\outputs\\sih_product_flow_validation\\20260903\\screenshots\\NYC_00735_perspective_fly.png"
+  },
+  "overall_status": "PASS"
+}

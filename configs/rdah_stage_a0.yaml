@@ -1,0 +1,33 @@
+# DepthWizard (SIH26175) — Stage A0 Debug Pipeline Configuration
+# Player 1: AI/ML Lead
+
+name: "RDAH-Net_Stage_A0_Debug"
+stage: "A0"
+epochs: 5
+batch_size: 4
+gradient_accumulation_steps: 2 # Effective batch size = 8
+mixed_precision: true
+random_seed: 42
+
+manifests:
+  train: "data/gamus/splits/stage_a0_train.txt"
+  val: "data/gamus/splits/stage_a0_val.txt"
+
+data:
+  data_dir: "data/gamus/dataset"
+  cache_dir: "data/gamus/cache_dav2"
+  crop_size: [512, 512]
+
+model:
+  name: "RDAHNetDepthWizard"
+  d_model: 32
+  num_heads: 4
+  freeze_dav2: true
+
+optimizer:
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+
+loss:
+  beta: 1.0
+  grad_weight: 0.5

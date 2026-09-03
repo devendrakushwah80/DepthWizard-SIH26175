@@ -1,0 +1,128 @@
+{
+  "test_name": "DepthWizard 3D viewer browser validation",
+  "frontend_base": "http://127.0.0.1:3000",
+  "api_base": "http://127.0.0.1:8000",
+  "cases": {
+    "NYC_00735": {
+      "status": "PASS",
+      "rgb_texture_visible": true,
+      "rgb_texture_loaded": true,
+      "rgb_texture_size": "1024x1024",
+      "material": "MeshBasicMaterial-white-srgb",
+      "winding_corrections": 1,
+      "height_relief_visible": true,
+      "physical_height_range_m": 8.234118416905403,
+      "default_display_scale": 5.0,
+      "tested_display_scale": 10.0,
+      "camera_presets": {
+        "top": true,
+        "eye": true,
+        "oblique": true
+      },
+      "orbit": true,
+      "fly_mode": true,
+      "inspection_invariant_at_1x_vs_10x": true,
+      "ruler_invariant_at_1x_vs_10x": true,
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\viewer_validation\\screenshots\\NYC_00735_oblique.png",
+      "non_background_fraction": 0.174264,
+      "canvas_rgb_std": 38.609337
+    },
+    "NYC_01086": {
+      "status": "PASS",
+      "rgb_texture_visible": true,
+      "rgb_texture_loaded": true,
+      "rgb_texture_size": "1024x1024",
+      "material": "MeshBasicMaterial-white-srgb",
+      "winding_corrections": 1,
+      "height_relief_visible": true,
+      "physical_height_range_m": 12.527455478906631,
+      "default_display_scale": 5.0,
+      "tested_display_scale": 10.0,
+      "camera_presets": {
+        "top": true,
+        "eye": true,
+        "oblique": true
+      },
+      "orbit": true,
+      "fly_mode": true,
+      "inspection_invariant_at_1x_vs_10x": true,
+      "ruler_invariant_at_1x_vs_10x": true,
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\viewer_validation\\screenshots\\NYC_01086_oblique.png",
+      "non_background_fraction": 0.175524,
+      "canvas_rgb_std": 51.624878
+    },
+    "NYC_01103": {
+      "status": "PASS",
+      "rgb_texture_visible": true,
+      "rgb_texture_loaded": true,
+      "rgb_texture_size": "1024x1024",
+      "material": "MeshBasicMaterial-white-srgb",
+      "winding_corrections": 1,
+      "height_relief_visible": true,
+      "physical_height_range_m": 7.3952494114637375,
+      "default_display_scale": 5.0,
+      "tested_display_scale": 10.0,
+      "camera_presets": {
+        "top": true,
+        "eye": true,
+        "oblique": true
+      },
+      "orbit": true,
+      "fly_mode": true,
+      "inspection_invariant_at_1x_vs_10x": true,
+      "ruler_invariant_at_1x_vs_10x": true,
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\viewer_validation\\screenshots\\NYC_01103_oblique.png",
+      "non_background_fraction": 0.174523,
+      "canvas_rgb_std": 44.881092
+    },
+    "NYC_01270": {
+      "status": "PASS",
+      "rgb_texture_visible": true,
+      "rgb_texture_loaded": true,
+      "rgb_texture_size": "1024x1024",
+      "material": "MeshBasicMaterial-white-srgb",
+      "winding_corrections": 1,
+      "height_relief_visible": true,
+      "physical_height_range_m": 2.3398700654506683,
+      "default_display_scale": 5.0,
+      "tested_display_scale": 10.0,
+      "camera_presets": {
+        "top": true,
+        "eye": true,
+        "oblique": true
+      },
+      "orbit": true,
+      "fly_mode": true,
+      "inspection_invariant_at_1x_vs_10x": true,
+      "ruler_invariant_at_1x_vs_10x": true,
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\viewer_validation\\screenshots\\NYC_01270_oblique.png",
+      "non_background_fraction": 0.173515,
+      "canvas_rgb_std": 36.523479
+    },
+    "GAMUS_DEMO_RGB": {
+      "status": "PASS",
+      "rgb_texture_visible": true,
+      "rgb_texture_loaded": true,
+      "rgb_texture_size": "1024x1024",
+      "material": "MeshBasicMaterial-white-srgb",
+      "winding_corrections": 1,
+      "height_relief_visible": true,
+      "physical_height_range_m": 27.810797669924796,
+      "default_display_scale": 5.0,
+      "tested_display_scale": 10.0,
+      "camera_presets": {
+        "top": true,
+        "eye": true,
+        "oblique": true
+      },
+      "orbit": true,
+      "fly_mode": true,
+      "inspection_invariant_at_1x_vs_10x": true,
+      "ruler_invariant_at_1x_vs_10x": true,
+      "screenshot": "C:\\DepthWizard-SIH26175\\outputs\\viewer_validation\\screenshots\\GAMUS_DEMO_RGB_oblique.png",
+      "non_background_fraction": 0.145067,
+      "canvas_rgb_std": 26.633385
+    }
+  },
+  "overall_status": "PASS"
+}

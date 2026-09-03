@@ -1,0 +1,84 @@
+# DepthWizard (SIH26175) — RDAH-Net + GAMUS Baseline Experiment Configuration
+# Player 1: AI/ML Lead
+
+experiment:
+  name: "rdah_net_gamus_stageA"
+  description: "RDAH-Net Metric Height Estimation with Frozen Depth Anything V2 Small Prior"
+  problem_statement_id: "SIH26175"
+  organization: "ISRO / Department of Space"
+  random_seed: 42
+
+hardware:
+  target_device: "cuda:0"
+  device_name: "NVIDIA GeForce RTX 4060 Laptop GPU"
+  total_vram_gb: 8.0
+  mixed_precision: "fp16" # PyTorch AMP for memory efficiency and speed
+
+model:
+  name: "RDAHNetDepthWizard"
+  dav2_backbone:
+    model_id: "depth-anything/Depth-Anything-V2-Small-hf"
+    variant: "ViT-Small"
+    freeze_backbone: true # Stage A: Frozen DAV2 prior
+    input_resolution: [518, 518]
+  rdah_core:
+    d_model: 32
+    num_heads: 4
+    block_size: 8
+    dropout: 0.1
+    decoder_upsample_stages: 4
+    pixel_shuffle_scale: 2
+
+data:
+  dataset: "earthflow/GAMUS"
+  root_dir: "data/gamus/samples"
+  height_mode: "mask_negative" # Preserves exact metric AGL; generates valid_mask
+  target_unit: "metres"
+  native_resolution: [1024, 1024]
+  train_crop_size: [512, 512] # Random 512x512 crops during training
+  val_eval_strategy: "tiled_sliding_window" # 512x512 with 64px overlap
+  num_workers: 2
+  pin_memory: true
+
+training:
+  stage: "Stage A (Train Fusion + RGB Branch + Height Decoder only)"
+  epochs: 50
+  batch_size: 2
+  gradient_accumulation_steps: 4 # Effective batch size = 8
+  optimizer:
+    name: "AdamW"
+    lr: 1.0e-4
+    weight_decay: 1.0e-4
+    betas: [0.9, 0.999]
+    eps: 1.0e-8
+  scheduler:
+    name: "CosineAnnealingLR"
+    T_max: 50
+    eta_min: 1.0e-6
+    warmup_epochs: 3
+
+loss:
+  primary:
+    name: "MaskedSmoothL1Loss"
+    beta: 1.0
+    weight: 1.0
+  regularization:
+    name: "MaskedGradientLoss"
+    weight: 0.5 # Edge and gradient preservation on building boundaries
+  safety:
+    ignore_nan: true
+    mask_negative_heights: true
+
+evaluation:
+  metrics:
+    - "MAE_metres"
+    - "RMSE_metres"
+    - "Pearson_r"
+    - "Spearman_rho"
+    - "Class_Wise_MAE"
+    - "Height_Bucket_MAE"
+  height_buckets:
+    - "0-2m"   # Ground, road, water
+    - "2-10m"  # Low-rise, trees
+    - "10-20m" # Medium buildings, tall trees
+    - "20-50m" # High-rise structures

@@ -1,0 +1,55 @@
+{
+  "avg_validation_ms": 0.0,
+  "avg_dav2_prior_ms": 152.79,
+  "avg_rdah_sliding_window_ms": 400.01,
+  "avg_total_ai_inference_ms": 552.8,
+  "avg_geospatial_ms": 0.0,
+  "avg_mesh_and_pointcloud_ms": 1648.38,
+  "avg_total_pipeline_latency_ms": 2207.83,
+  "avg_total_pipeline_latency_s": 2.21,
+  "avg_peak_vram_mb": 230.7,
+  "runs": [
+    {
+      "run": 1,
+      "input_resolution": "1024x1024",
+      "validation_ms": 0.0,
+      "dav2_prior_ms": 298.75,
+      "rdah_sliding_window_ms": 449.19,
+      "total_ai_inference_ms": 747.94,
+      "geospatial_processing_ms": 0.0,
+      "mesh_384_and_pointcloud_ms": 1652.6,
+      "total_pipeline_latency_ms": 2406.3,
+      "total_pipeline_latency_s": 2.41,
+      "peak_vram_mb": 229.7,
+      "resident_vram_mb": 115.2
+    },
+    {
+      "run": 2,
+      "input_resolution": "1024x1024",
+      "validation_ms": 0.0,
+      "dav2_prior_ms": 79.6,
+      "rdah_sliding_window_ms": 377.64,
+      "total_ai_inference_ms": 457.24,
+      "geospatial_processing_ms": 0.0,
+      "mesh_384_and_pointcloud_ms": 1645.83,
+      "total_pipeline_latency_ms": 2109.24,
+      "total_pipeline_latency_s": 2.11,
+      "peak_vram_mb": 231.2,
+      "resident_vram_mb": 115.2
+    },
+    {
+      "run": 3,
+      "input_resolution": "1024x1024",
+      "validation_ms": 0.0,
+      "dav2_prior_ms": 80.02,
+      "rdah_sliding_window_ms": 373.21,
+      "total_ai_inference_ms": 453.23,
+      "geospatial_processing_ms": 0.0,
+      "mesh_384_and_pointcloud_ms": 1646.7,
+      "total_pipeline_latency_ms": 2107.94,
+      "total_pipeline_latency_s": 2.11,
+      "peak_vram_mb": 231.2,
+      "resident_vram_mb": 115.2
+    }
+  ]
+}

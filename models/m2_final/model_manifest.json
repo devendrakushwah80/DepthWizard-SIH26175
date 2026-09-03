@@ -1,0 +1,26 @@
+{
+  "model_name": "M2-FINAL",
+  "checkpoint": "models/m2_final/M2_FINAL.pth",
+  "checkpoint_sha256": "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+  "architecture": "RDAHNetCore",
+  "architecture_parameters": {
+    "d_model": 32,
+    "num_heads": 4,
+    "output_parameterization": "softplus",
+    "trainable_parameter_count": 5372047
+  },
+  "frozen_relative_depth_prior": "depth-anything/Depth-Anything-V2-Small-hf",
+  "selected_trial": 10,
+  "selected_seed": 1337,
+  "selected_epoch": 10,
+  "final_validation": {
+    "dataset_tiles": 200,
+    "mae_m": 2.5175966460779238,
+    "rmse_m": 4.737624482711636,
+    "r2": 0.6309778286586298,
+    "pearson_r": 0.8062702932653846,
+    "bias_m": -0.9176289401599845
+  },
+  "scientific_output": "predicted AGL / nDSM in metres",
+  "absolute_dsm_requirement": "aligned terrain DEM on the same CRS, transform, resolution, and raster grid"
+}

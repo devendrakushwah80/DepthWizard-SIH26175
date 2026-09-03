@@ -1,0 +1,35 @@
+{
+  "test_name": "Player 4 Golden End-to-End Pipeline Verification",
+  "status": "PASS",
+  "execution_timestamp": "2026-09-01T15:41:43Z",
+  "total_latency_s": 5.49,
+  "job_id": "556ec603-c450-46c2-8e2e-baeb050a065e",
+  "scene_id": "golden_nyc_test",
+  "pipeline_stages_verified": {
+    "upload_validation": "PASS",
+    "m1_inference_hanning": "PASS",
+    "scene3d_generation": "PASS",
+    "mesh_384_glb_export": "PASS (10.06 MB)",
+    "pointcloud_ply_export": "PASS (5.25 MB)",
+    "metadata_endpoint": "PASS",
+    "full_res_inspection": "PASS (1.44m)",
+    "spatial_ruler_measurement": "PASS (282.8m)"
+  },
+  "elevation_statistics_m": {
+    "type": "AGL",
+    "unit": "metres",
+    "min_m": 0.14330582320690155,
+    "max_m": 8.377424240112305,
+    "mean_m": 0.9622993469238281,
+    "median_m": 0.25619661808013916,
+    "std_m": 1.6024318933486938
+  },
+  "artifacts_verified": {
+    "mesh_glb": "/api/v1/scenes/golden_nyc_test/mesh.glb",
+    "pointcloud_ply": "/api/v1/scenes/golden_nyc_test/pointcloud.ply",
+    "metadata": "/api/v1/scenes/golden_nyc_test/metadata",
+    "texture_rgb": "/api/v1/scenes/golden_nyc_test/texture/rgb",
+    "heightmap": "/api/v1/scenes/golden_nyc_test/heightmap",
+    "slope": "/api/v1/scenes/golden_nyc_test/slope"
+  }
+}

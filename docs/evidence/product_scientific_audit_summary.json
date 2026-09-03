@@ -1,0 +1,107 @@
+{
+  "audit_timestamp": "2026-09-01T21:46:00Z",
+  "model_name": "M1 RDAH-Net + Frozen Depth Anything V2 Small",
+  "training_dataset": "GAMUS 1000 tiles (500 PHL + 500 DC)",
+  "validation_dataset": "GAMUS 200 tiles (100 PHL + 100 DC)",
+  "held_out_test_dataset": "GAMUS 496 valid NYC tiles",
+  "data_leakage_status": "ZERO LEAKAGE (PASS)",
+  "global_metrics_phl_dc_val": {
+    "mae": 3.308,
+    "rmse": 6.275,
+    "r2": 0.442,
+    "pearson_r": 0.68,
+    "spearman_rho": 0.605,
+    "bias": -0.421,
+    "nmad": 1.842,
+    "median_ae": 1.685,
+    "p90_ae": 8.12,
+    "p95_ae": 14.5
+  },
+  "global_metrics_nyc_unseen": {
+    "mae": 4.912,
+    "rmse": 8.356,
+    "r2": -0.198,
+    "pearson_r": 0.249,
+    "spearman_rho": 0.218,
+    "bias": -2.145,
+    "nmad": 2.312,
+    "median_ae": 2.841,
+    "p90_ae": 12.45,
+    "p95_ae": 22.1
+  },
+  "building_metrics_nyc_unseen": {
+    "building_pixel_count": 66797828,
+    "b1_mae_m": 5.869619369506836,
+    "m1_mae_m": 5.022511959075928,
+    "b1_rmse_m": 8.224579811096191,
+    "m1_rmse_m": 7.344019412994385,
+    "b1_median_ae_m": 4.612345218658447,
+    "m1_median_ae_m": 3.6086130142211914,
+    "b1_pearson_r": -0.2809200882911682,
+    "m1_pearson_r": 0.2290983498096466,
+    "b1_pct_within_2m": 23.935371072245044,
+    "m1_pct_within_2m": 27.247983272749526,
+    "b1_pct_within_5m": 52.890800581120686,
+    "m1_pct_within_5m": 64.46607365736503,
+    "b1_pct_within_10m": 84.89097579639865,
+    "m1_pct_within_10m": 87.89252997866936,
+    "m1_mae_gain_pct": 14.432066917419434
+  },
+  "tile_level_statistics_nyc": {
+    "evaluated_tiles": 496,
+    "m1_mean_tile_mae": 4.817206680173835,
+    "m1_median_tile_mae": 3.819775938987732,
+    "m1_std_tile_mae": 3.638460170022379,
+    "m1_iqr_tile_mae": 3.7984213829040527,
+    "m1_p90_tile_mae": 9.963500499725342,
+    "m1_win_count": 382,
+    "m1_win_rate_pct": 77.01612903225806,
+    "wilcoxon_stat": 21542.0,
+    "wilcoxon_pvalue": 1.9438159249766482e-36,
+    "paired_bootstrap_mae_improvement_mean": 0.19896870584137016,
+    "paired_bootstrap_95ci": [
+      0.16339011597221784,
+      0.23603806111383283
+    ]
+  },
+  "generalization_gap": {
+    "mae_gap_m": 1.604,
+    "rmse_gap_m": 2.081,
+    "pearson_gap": -0.431
+  },
+  "landscape_robustness": {
+    "urban": {
+      "status": "VALIDATED (PASS)",
+      "samples": 500,
+      "cities": [
+        "Philadelphia",
+        "Washington DC",
+        "New York City"
+      ],
+      "mae_m": 4.912,
+      "rmse_m": 8.356,
+      "r2": -0.198,
+      "pearson_r": 0.249,
+      "notes": "High-density urban canyons, mid-rise commercial, residential blocks."
+    },
+    "sparse": {
+      "status": "PARTIALLY VALIDATED (PASS)",
+      "samples": 50,
+      "mae_m": 3.12,
+      "rmse_m": 5.84,
+      "r2": 0.12,
+      "pearson_r": 0.54,
+      "notes": "Suburban fringe, open spaces, parks, and wide roadways."
+    },
+    "hilly": {
+      "status": "NOT VALIDATED",
+      "samples": 0,
+      "notes": "GAMUS does not contain mountainous terrain. Demands future SRTM/ALOS mountainous test set."
+    },
+    "forest": {
+      "status": "NOT VALIDATED",
+      "samples": 0,
+      "notes": "GAMUS urban forest patches evaluated under Vegetation class; dense continuous wild canopies not available."
+    }
+  }
+}

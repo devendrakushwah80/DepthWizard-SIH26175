@@ -1,0 +1,437 @@
+{
+  "test_name": "M2-FINAL real product integration matrix",
+  "timestamp": "20260902_224345",
+  "checkpoint_sha256_expected": "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+  "cases": {
+    "normal_png_unknown_gsd": {
+      "status": "PASS",
+      "scene_id": "m2int_normal_png_unknown_gsd_224345",
+      "shape": [
+        1024,
+        1024
+      ],
+      "height_min_m": 0.02942311391234398,
+      "height_max_m": 23.255077362060547,
+      "height_mean_m": 3.733703136444092,
+      "warnings": [
+        "GSD unavailable: horizontal metric distance and slope disabled.",
+        "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+      ],
+      "spatial_info": {
+        "is_georeferenced": false,
+        "crs": null,
+        "gsd_m": null,
+        "gsd_source": "unavailable",
+        "horizontal_units": "pixels",
+        "physical_width_m": null,
+        "physical_height_m": null,
+        "bounds": null,
+        "transform": null,
+        "resolution": null
+      },
+      "output_semantics": {
+        "primary": "predicted_agl_ndsm",
+        "vertical_unit": "metres",
+        "horizontal_metric_scale_known": false,
+        "absolute_dsm_available": false,
+        "mesh_height_surface": "predicted_agl",
+        "mesh_horizontal_units": "pixels",
+        "vertical_exaggeration_baked_into_artifacts": 1.0
+      },
+      "processing_timings": {
+        "input_validation_s": 0.045269,
+        "dav2_inference_s": 0.423218,
+        "m2_inference_s": 0.546093,
+        "total_ai_s": 0.969311,
+        "inference_service_total_s": 0.980329,
+        "geospatial_processing_s": 0.001459,
+        "window_count": 9.0,
+        "window_size_px": 512.0,
+        "window_step_px": 256.0,
+        "mesh_generation_s": 0.083596,
+        "glb_generation_s": 0.154124,
+        "obj_generation_s": 0.708317,
+        "pointcloud_generation_s": 0.0,
+        "scene_products_s": 1.090566,
+        "full_api_latency_s": 2.136841,
+        "total_pipeline_s": 2.127983
+      },
+      "peak_vram_mb": 230.78,
+      "artifact_sizes_bytes": {
+        "predicted_agl_npy": 4194432,
+        "height_visualization_png": 544104,
+        "rgb_texture_jpg": 443627,
+        "mesh_glb": 5942112,
+        "mesh_obj": 12503363
+      },
+      "glb_geometry_count": 1,
+      "glb_texture_kinds": [
+        "texture"
+      ]
+    },
+    "arbitrary_jpg_user_gsd": {
+      "status": "PASS",
+      "scene_id": "m2int_arbitrary_jpg_user_gsd_224345",
+      "shape": [
+        333,
+        701
+      ],
+      "height_min_m": 0.07247636467218399,
+      "height_max_m": 21.918907165527344,
+      "height_mean_m": 5.377640247344971,
+      "warnings": [
+        "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+      ],
+      "spatial_info": {
+        "is_georeferenced": false,
+        "crs": null,
+        "gsd_m": 0.5,
+        "gsd_source": "user",
+        "horizontal_units": "metres",
+        "physical_width_m": 350.5,
+        "physical_height_m": 166.5,
+        "bounds": null,
+        "transform": null,
+        "resolution": null
+      },
+      "output_semantics": {
+        "primary": "predicted_agl_ndsm",
+        "vertical_unit": "metres",
+        "horizontal_metric_scale_known": true,
+        "absolute_dsm_available": false,
+        "mesh_height_surface": "predicted_agl",
+        "mesh_horizontal_units": "metres",
+        "vertical_exaggeration_baked_into_artifacts": 1.0
+      },
+      "processing_timings": {
+        "input_validation_s": 0.010237,
+        "dav2_inference_s": 0.068722,
+        "m2_inference_s": 0.119678,
+        "total_ai_s": 0.1884,
+        "inference_service_total_s": 0.191405,
+        "geospatial_processing_s": 0.000805,
+        "window_count": 2.0,
+        "window_size_px": 512.0,
+        "window_step_px": 256.0,
+        "mesh_generation_s": 0.047721,
+        "glb_generation_s": 0.080441,
+        "obj_generation_s": 0.686606,
+        "pointcloud_generation_s": 0.0,
+        "scene_products_s": 0.906607,
+        "full_api_latency_s": 1.112985,
+        "total_pipeline_s": 1.111513
+      },
+      "peak_vram_mb": 208.681,
+      "artifact_sizes_bytes": {
+        "predicted_agl_npy": 933860,
+        "height_visualization_png": 211098,
+        "slope_visualization_png": 418244,
+        "rgb_texture_jpg": 114043,
+        "mesh_glb": 4213088,
+        "mesh_obj": 12417763
+      },
+      "glb_geometry_count": 1,
+      "glb_texture_kinds": [
+        "texture"
+      ]
+    },
+    "valid_geotiff": {
+      "status": "PASS",
+      "scene_id": "m2int_valid_geotiff_224345",
+      "shape": [
+        512,
+        512
+      ],
+      "height_min_m": 0.0395534448325634,
+      "height_max_m": 16.930068969726562,
+      "height_mean_m": 2.0595285892486572,
+      "warnings": [
+        "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+      ],
+      "spatial_info": {
+        "is_georeferenced": true,
+        "crs": "EPSG:32618",
+        "gsd_m": 0.5,
+        "gsd_source": "geotiff",
+        "horizontal_units": "metres",
+        "physical_width_m": 256.0,
+        "physical_height_m": 256.0,
+        "bounds": {
+          "left": 584000.0,
+          "bottom": 4509744.0,
+          "right": 584256.0,
+          "top": 4510000.0
+        },
+        "transform": [
+          0.5,
+          0.0,
+          584000.0,
+          0.0,
+          -0.5,
+          4510000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "resolution": [
+          0.5,
+          0.5
+        ]
+      },
+      "output_semantics": {
+        "primary": "predicted_agl_ndsm",
+        "vertical_unit": "metres",
+        "horizontal_metric_scale_known": true,
+        "absolute_dsm_available": false,
+        "mesh_height_surface": "predicted_agl",
+        "mesh_horizontal_units": "metres",
+        "vertical_exaggeration_baked_into_artifacts": 1.0
+      },
+      "processing_timings": {
+        "input_validation_s": 0.019611,
+        "dav2_inference_s": 0.084989,
+        "m2_inference_s": 0.058502,
+        "total_ai_s": 0.143492,
+        "inference_service_total_s": 0.145789,
+        "geospatial_processing_s": 0.007859,
+        "window_count": 1.0,
+        "window_size_px": 512.0,
+        "window_step_px": 256.0,
+        "mesh_generation_s": 0.040143,
+        "glb_generation_s": 0.065995,
+        "obj_generation_s": 0.779339,
+        "pointcloud_generation_s": 0.0,
+        "scene_products_s": 0.959201,
+        "full_api_latency_s": 1.137274,
+        "total_pipeline_s": 1.135782
+      },
+      "peak_vram_mb": 230.78,
+      "artifact_sizes_bytes": {
+        "predicted_agl_npy": 1048704,
+        "predicted_agl_tif": 1049722,
+        "height_visualization_png": 140456,
+        "slope_visualization_png": 341623,
+        "rgb_texture_jpg": 111633,
+        "mesh_glb": 4266672,
+        "mesh_obj": 12412866
+      },
+      "glb_geometry_count": 1,
+      "glb_texture_kinds": [
+        "texture"
+      ]
+    },
+    "geotiff_aligned_dem": {
+      "status": "PASS",
+      "scene_id": "m2int_geotiff_aligned_dem_224345",
+      "shape": [
+        512,
+        512
+      ],
+      "height_min_m": 0.0395534448325634,
+      "height_max_m": 16.930068969726562,
+      "height_mean_m": 2.0595285892486572,
+      "warnings": [],
+      "spatial_info": {
+        "is_georeferenced": true,
+        "crs": "EPSG:32618",
+        "gsd_m": 0.5,
+        "gsd_source": "geotiff",
+        "horizontal_units": "metres",
+        "physical_width_m": 256.0,
+        "physical_height_m": 256.0,
+        "bounds": {
+          "left": 584000.0,
+          "bottom": 4509744.0,
+          "right": 584256.0,
+          "top": 4510000.0
+        },
+        "transform": [
+          0.5,
+          0.0,
+          584000.0,
+          0.0,
+          -0.5,
+          4510000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "resolution": [
+          0.5,
+          0.5
+        ]
+      },
+      "output_semantics": {
+        "primary": "predicted_agl_ndsm",
+        "vertical_unit": "metres",
+        "horizontal_metric_scale_known": true,
+        "absolute_dsm_available": true,
+        "mesh_height_surface": "absolute_dsm",
+        "mesh_horizontal_units": "metres",
+        "vertical_exaggeration_baked_into_artifacts": 1.0
+      },
+      "processing_timings": {
+        "input_validation_s": 0.016622,
+        "dav2_inference_s": 0.082072,
+        "m2_inference_s": 0.066067,
+        "total_ai_s": 0.148139,
+        "inference_service_total_s": 0.150137,
+        "geospatial_processing_s": 0.027728,
+        "window_count": 1.0,
+        "window_size_px": 512.0,
+        "window_step_px": 256.0,
+        "mesh_generation_s": 0.046177,
+        "glb_generation_s": 0.070435,
+        "obj_generation_s": 0.74899,
+        "pointcloud_generation_s": 0.0,
+        "scene_products_s": 0.960391,
+        "full_api_latency_s": 1.16155,
+        "total_pipeline_s": 1.157868
+      },
+      "peak_vram_mb": 230.78,
+      "artifact_sizes_bytes": {
+        "predicted_agl_npy": 1048704,
+        "predicted_agl_tif": 1049722,
+        "absolute_dsm_npy": 1048704,
+        "absolute_dsm_tif": 1049722,
+        "height_visualization_png": 140456,
+        "slope_visualization_png": 341623,
+        "rgb_texture_jpg": 111633,
+        "mesh_glb": 4266672,
+        "mesh_obj": 12471912
+      },
+      "glb_geometry_count": 1,
+      "glb_texture_kinds": [
+        "texture"
+      ]
+    },
+    "metadata_absent_tiff": {
+      "status": "PASS",
+      "scene_id": "m2int_metadata_absent_tiff_224345",
+      "shape": [
+        256,
+        320
+      ],
+      "height_min_m": 0.05332157388329506,
+      "height_max_m": 21.342384338378906,
+      "height_mean_m": 1.8415731191635132,
+      "warnings": [
+        "GSD unavailable: horizontal metric distance and slope disabled.",
+        "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+      ],
+      "spatial_info": {
+        "is_georeferenced": false,
+        "crs": null,
+        "gsd_m": null,
+        "gsd_source": "unavailable",
+        "horizontal_units": "pixels",
+        "physical_width_m": null,
+        "physical_height_m": null,
+        "bounds": {
+          "left": 0.0,
+          "bottom": 256.0,
+          "right": 320.0,
+          "top": 0.0
+        },
+        "transform": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "resolution": [
+          1.0,
+          1.0
+        ]
+      },
+      "output_semantics": {
+        "primary": "predicted_agl_ndsm",
+        "vertical_unit": "metres",
+        "horizontal_metric_scale_known": false,
+        "absolute_dsm_available": false,
+        "mesh_height_surface": "predicted_agl",
+        "mesh_horizontal_units": "pixels",
+        "vertical_exaggeration_baked_into_artifacts": 1.0
+      },
+      "processing_timings": {
+        "input_validation_s": 0.017934,
+        "dav2_inference_s": 0.074921,
+        "m2_inference_s": 0.08027,
+        "total_ai_s": 0.155191,
+        "inference_service_total_s": 0.156191,
+        "geospatial_processing_s": 0.001241,
+        "window_count": 1.0,
+        "window_size_px": 512.0,
+        "window_step_px": 256.0,
+        "mesh_generation_s": 0.036808,
+        "glb_generation_s": 0.061028,
+        "obj_generation_s": 0.789707,
+        "pointcloud_generation_s": 0.0,
+        "scene_products_s": 0.91088,
+        "full_api_latency_s": 1.095408,
+        "total_pipeline_s": 1.094293
+      },
+      "peak_vram_mb": 210.304,
+      "artifact_sizes_bytes": {
+        "predicted_agl_npy": 327808,
+        "height_visualization_png": 45024,
+        "rgb_texture_jpg": 35981,
+        "mesh_glb": 3896844,
+        "mesh_obj": 12421563
+      },
+      "glb_geometry_count": 1,
+      "glb_texture_kinds": [
+        "texture"
+      ]
+    },
+    "invalid_file": {
+      "status": "PASS",
+      "observed_job_status": "failed",
+      "error_message": "Input image is corrupt or unreadable: cannot identify image file 'C:\\\\DepthWizard-SIH26175\\\\outputs\\\\temp_uploads\\\\d10f52d0-f873-4f09-bff7-2bb91a876654_corrupt.png'",
+      "full_api_latency_s": 0.036
+    },
+    "misaligned_dem": {
+      "status": "PASS",
+      "observed_job_status": "failed",
+      "error_message": "DEM alignment validation failed: affine transform/origin differs from optical grid",
+      "full_api_latency_s": 0.248
+    }
+  },
+  "health": {
+    "status": "ok",
+    "version": "2.0.0",
+    "model": {
+      "loaded": true,
+      "name": "M2-FINAL + Frozen Depth Anything V2 Small",
+      "device": "cuda",
+      "checkpoint_path": "C:\\DepthWizard-SIH26175\\outputs\\player1_stage_a2\\final\\M2_FINAL.pth",
+      "vram_allocated_mb": 116.9,
+      "checkpoint_sha256": "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+      "checkpoint_sha256_verified": true,
+      "output_parameterization": "softplus",
+      "dav2_model_id": "depth-anything/Depth-Anything-V2-Small-hf",
+      "dav2_frozen": true
+    },
+    "gpu": {
+      "available": true,
+      "device_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "total_memory_mb": 8187.5,
+      "allocated_memory_mb": 116.9,
+      "free_memory_mb": 8070.6
+    },
+    "modules": {
+      "inference_service": true,
+      "geospatial_service": true,
+      "geometry_3d_engine": true,
+      "job_manager": true
+    }
+  },
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "overall_status": "PASS"
+}

@@ -1,0 +1,24 @@
+{
+  "seed": 42,
+  "total_dataset_triplets": 8724,
+  "phl_total": 4398,
+  "dc_total": 2159,
+  "nyc_total": 2167,
+  "stage_a0": {
+    "train_count": 128,
+    "val_count": 32,
+    "train_phl": 64,
+    "train_dc": 64,
+    "val_phl": 16,
+    "val_dc": 16
+  },
+  "stage_a1": {
+    "train_count": 1000,
+    "val_count": 200,
+    "train_phl": 500,
+    "train_dc": 500,
+    "val_phl": 100,
+    "val_dc": 100
+  },
+  "nyc_unseen_test_count": 2167
+}

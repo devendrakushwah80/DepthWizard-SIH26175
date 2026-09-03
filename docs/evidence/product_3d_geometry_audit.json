@@ -1,0 +1,40 @@
+{
+  "test_name": "Player 6 3D Geometry & Hanning Border Audit",
+  "status": "PASS",
+  "hanning_border_audit": {
+    "min_weight_sum": 9.999999747378752e-05,
+    "nan_count": 0,
+    "inf_count": 0,
+    "corners_finite": true
+  },
+  "real_scene_mesh_fidelity": {
+    "NYC_00735": {
+      "source_max_m": 8.377424240112305,
+      "source_mean_m": 0.9622993469238281,
+      "mesh_mae_m": 0.01709946244955063,
+      "mesh_rmse_m": 0.04299633577466011,
+      "mesh_p95_m": 0.08299916982650757,
+      "mesh_max_dev_m": 1.569378137588501,
+      "peak_retention_pct": 99.49487532737137
+    },
+    "NYC_01086": {
+      "source_max_m": 12.66141414642334,
+      "source_mean_m": 1.0733880996704102,
+      "mesh_mae_m": 0.01851934753358364,
+      "mesh_rmse_m": 0.06206541880965233,
+      "mesh_p95_m": 0.09517347812652588,
+      "mesh_max_dev_m": 3.5500006675720215,
+      "peak_retention_pct": 98.09931943429176
+    },
+    "e2e_frontend_verified": {
+      "source_max_m": 8.377424240112305,
+      "source_mean_m": 0.9622993469238281,
+      "mesh_mae_m": 0.01709946244955063,
+      "mesh_rmse_m": 0.04299633577466011,
+      "mesh_p95_m": 0.08299916982650757,
+      "mesh_max_dev_m": 1.569378137588501,
+      "peak_retention_pct": 99.49487532737137
+    }
+  },
+  "scientific_conclusion": "384x384 mesh resampling introduces only ~1.7 to 1.9 cm average geometric error on real urban satellite scenes while delivering 60 FPS WebGL performance."
+}

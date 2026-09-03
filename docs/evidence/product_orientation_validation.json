@@ -1,0 +1,958 @@
+{
+  "test_name": "DepthWizard image-aligned screen-space orientation audit",
+  "root_cause": "Former Oblique camera used a nonzero -X/+Z azimuth, mixing raster X and Z in screen X. The +X=image-right, +Z=image-top, +Y=surface-normal basis additionally requires a camera-only clip-X reflection when viewed from above/image-bottom to preserve both image-right and image-top.",
+  "old_camera_convention": {
+    "position": "mesh_center + normalize(-0.68, +0.72, +0.76) * fit_distance",
+    "side": "image-top (+Z) with negative-X azimuth",
+    "up": "+Y",
+    "projection_reflect_x": false
+  },
+  "new_camera_convention": {
+    "position": "mesh_center + normalize(0, +0.72, -0.76) * fit_distance",
+    "side": "image-bottom (-Z), X exactly centered",
+    "target": "mesh bounding-box/sphere center",
+    "up": "+Y",
+    "projection_reflect_x": true,
+    "top": "camera above +Y, camera.up=+Z, same clip-X reflection",
+    "geometry_or_uv_change": "none"
+  },
+  "primary_scene": {
+    "status": "PASS",
+    "default_state": {
+      "experienceMode": "explore",
+      "viewerReady": "true",
+      "sceneId": "scene_c445f5a7",
+      "cameraPosition": "0.000,754.292,-756.431",
+      "imageOrientationActive": "true",
+      "cameraPreset": "image_aligned",
+      "cameraAboveTerrain": "true",
+      "cameraTarget": "0.000,37.673,0.000",
+      "cameraNear": "0.050000",
+      "cameraFar": "9785.806",
+      "displayBounds": "-341.000,-1.981,-220.000,341.000,77.328,220.000",
+      "imageProjectionReflectedX": "true",
+      "rgbTextureLoaded": "true",
+      "rgbTextureSize": "682x440",
+      "windingCorrections": "1",
+      "material": "MeshBasicMaterial-white-srgb",
+      "textureMode": "rgb",
+      "displayVerticalScale": "5",
+      "authoritativeVerticalScale": "1",
+      "physicalBounds": "-341.000,-1.981,-220.000,341.000,13.881,220.000",
+      "surfaceMode": "agl",
+      "projectionMode": "perspective",
+      "cameraType": "PerspectiveCamera",
+      "flyMode": "false"
+    },
+    "old_camera_state": {
+      "viewerReady": "true",
+      "sceneId": "scene_c445f5a7",
+      "cameraPosition": "-565.002,604.187,631.472",
+      "projectionMode": "perspective",
+      "cameraType": "PerspectiveCamera",
+      "experienceMode": "custom",
+      "imageOrientationActive": "false",
+      "cameraPreset": "oblique",
+      "cameraAboveTerrain": "true",
+      "cameraTarget": "0.000,5.950,0.000",
+      "cameraNear": "0.050000",
+      "cameraFar": "9741.277",
+      "displayBounds": "-341.000,-1.981,-220.000,341.000,13.881,220.000",
+      "imageProjectionReflectedX": "false",
+      "rgbTextureLoaded": "true",
+      "rgbTextureSize": "682x440",
+      "windingCorrections": "1",
+      "material": "MeshBasicMaterial-white-srgb",
+      "textureMode": "rgb",
+      "displayVerticalScale": "1",
+      "authoritativeVerticalScale": "1",
+      "physicalBounds": "-341.000,-1.981,-220.000,341.000,13.881,220.000",
+      "surfaceMode": "agl",
+      "flyMode": "false"
+    },
+    "aligned_state": {
+      "viewerReady": "true",
+      "sceneId": "scene_c445f5a7",
+      "cameraPosition": "0.000,754.292,-756.431",
+      "projectionMode": "perspective",
+      "cameraType": "PerspectiveCamera",
+      "experienceMode": "explore",
+      "imageOrientationActive": "true",
+      "cameraPreset": "image_aligned",
+      "cameraAboveTerrain": "true",
+      "cameraTarget": "0.000,37.673,0.000",
+      "cameraNear": "0.050000",
+      "cameraFar": "9785.806",
+      "displayBounds": "-341.000,-1.981,-220.000,341.000,77.328,220.000",
+      "imageProjectionReflectedX": "true",
+      "rgbTextureLoaded": "true",
+      "rgbTextureSize": "682x440",
+      "windingCorrections": "1",
+      "material": "MeshBasicMaterial-white-srgb",
+      "textureMode": "rgb",
+      "displayVerticalScale": "5",
+      "authoritativeVerticalScale": "1",
+      "physicalBounds": "-341.000,-1.981,-220.000,341.000,13.881,220.000",
+      "surfaceMode": "agl",
+      "flyMode": "false"
+    },
+    "top_camera": {
+      "type": "OrthographicCamera",
+      "position": [
+        0,
+        1637.42705868852,
+        0.0016317307218629569
+      ],
+      "up": [
+        0,
+        0,
+        1
+      ],
+      "quaternion": [
+        0,
+        0.7071064275781048,
+        0.7071071347948134,
+        0
+      ],
+      "target": [
+        0,
+        5.949967086315155,
+        0
+      ],
+      "reflectImageX": true,
+      "near": 0.05,
+      "far": 9741.277407601712
+    },
+    "old_camera": {
+      "type": "PerspectiveCamera",
+      "position": [
+        -565.0015099635984,
+        604.1868599889489,
+        631.4722758416689
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "quaternion": [
+        -0.28263334230532067,
+        -0.34017460099796226,
+        -0.10798418436663548,
+        0.8903589447969135
+      ],
+      "target": [
+        0,
+        5.949967086315155,
+        0
+      ],
+      "reflectImageX": false,
+      "near": 0.05,
+      "far": 9741.277407601712
+    },
+    "new_image_aligned_camera": {
+      "type": "PerspectiveCamera",
+      "position": [
+        9.26360465424998e-14,
+        754.2919761169293,
+        -756.4307244096552
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "quaternion": [
+        -2.2666195733527472e-17,
+        0.9289651995381276,
+        0.3701670677506128,
+        5.688271290668251e-17
+      ],
+      "target": [
+        0,
+        37.67339509725571,
+        0
+      ],
+      "reflectImageX": true,
+      "near": 0.05,
+      "far": 9785.80575610863
+    },
+    "top_landmarks": {
+      "L": {
+        "label": "LEFT museum structure",
+        "raster_uv": [
+          128,
+          60
+        ],
+        "agl_m": 10.096689224243164,
+        "world_physical_xyz": [
+          -212.81204111600587,
+          10.096689224243164,
+          159.8633257403189
+        ],
+        "screen_xy": [
+          428.100076614928,
+          398.83141586381726
+        ],
+        "ndc_xyz": [
+          -0.322626461052329,
+          0.36468710508614943,
+          -0.665898322359861
+        ]
+      },
+      "R": {
+        "label": "RIGHT statue structure",
+        "raster_uv": [
+          390,
+          300
+        ],
+        "agl_m": 9.29338264465332,
+        "world_physical_xyz": [
+          49.57268722466961,
+          9.29338264465332,
+          -80.68337129840546
+        ],
+        "screen_xy": [
+          679.4966880355814,
+          629.3045257295678
+        ],
+        "ndc_xyz": [
+          0.07515298739807194,
+          -0.1840583945942092,
+          -0.6657333437324131
+        ]
+      },
+      "T": {
+        "label": "TOP shoreline landmark",
+        "raster_uv": [
+          96,
+          24
+        ],
+        "agl_m": 0.2341141551733017,
+        "world_physical_xyz": [
+          -244.8590308370044,
+          0.2341141551733017,
+          195.94533029612757
+        ],
+        "screen_xy": [
+          397.39514697576425,
+          364.2604398174665
+        ],
+        "ndc_xyz": [
+          -0.37121021048138564,
+          0.44699895281555596,
+          -0.6638734155244546
+        ]
+      },
+      "B": {
+        "label": "BOTTOM shoreline landmark",
+        "raster_uv": [
+          379,
+          410
+        ],
+        "agl_m": 2.537416934967041,
+        "world_physical_xyz": [
+          38.55653450807637,
+          2.537416934967041,
+          -190.9339407744875
+        ],
+        "screen_xy": [
+          668.9418684721189,
+          734.9380282968087
+        ],
+        "ndc_xyz": [
+          0.058452323531833744,
+          -0.4355667340400209,
+          -0.6643462339371691
+        ]
+      },
+      "TL": {
+        "label": "top-left",
+        "raster_uv": [
+          0,
+          0
+        ],
+        "agl_m": 0.6954047083854675,
+        "world_physical_xyz": [
+          -341,
+          0.6954047083854675,
+          220
+        ],
+        "screen_xy": [
+          305.28035805827295,
+          341.2131291959543
+        ],
+        "ndc_xyz": [
+          -0.5169614587685555,
+          0.5018735019143945,
+          -0.6639681293818194
+        ]
+      },
+      "TR": {
+        "label": "top-right",
+        "raster_uv": [
+          681,
+          0
+        ],
+        "agl_m": 0.8119965195655823,
+        "world_physical_xyz": [
+          341,
+          0.8119965195655823,
+          220
+        ],
+        "screen_xy": [
+          958.719641941727,
+          341.21312930768084
+        ],
+        "ndc_xyz": [
+          0.5169614587685555,
+          0.501873501648379,
+          -0.6639920671888947
+        ]
+      },
+      "BL": {
+        "label": "bottom-left",
+        "raster_uv": [
+          0,
+          439
+        ],
+        "agl_m": 0.3407938778400421,
+        "world_physical_xyz": [
+          -341,
+          0.3407938778400421,
+          -220
+        ],
+        "screen_xy": [
+          305.28035805827295,
+          762.7868603936424
+        ],
+        "ndc_xyz": [
+          -0.5169614587685555,
+          -0.50187347712772,
+          -0.6638952328393014
+        ]
+      },
+      "BR": {
+        "label": "bottom-right",
+        "raster_uv": [
+          681,
+          439
+        ],
+        "agl_m": 0.8293849229812622,
+        "world_physical_xyz": [
+          341,
+          0.8293849229812622,
+          -220
+        ],
+        "screen_xy": [
+          958.719641941727,
+          762.786860861845
+        ],
+        "ndc_xyz": [
+          0.5169614587685555,
+          -0.5018734782424882,
+          -0.6639955469013178
+        ]
+      },
+      "25": {
+        "label": "25% width",
+        "raster_uv": [
+          170,
+          220
+        ],
+        "agl_m": 7.271524906158447,
+        "world_physical_xyz": [
+          -170.7503671071953,
+          7.271524906158447,
+          -0.5011389521640126
+        ],
+        "screen_xy": [
+          468.4002967663305,
+          552.4801535802347
+        ],
+        "ndc_xyz": [
+          -0.25886028992669224,
+          -0.0011432228100827395,
+          -0.6653182466488118
+        ]
+      },
+      "75": {
+        "label": "75% width",
+        "raster_uv": [
+          511,
+          220
+        ],
+        "agl_m": 0.06276033818721771,
+        "world_physical_xyz": [
+          170.7503671071953,
+          0.06276033818721771,
+          -0.5011389521640126
+        ],
+        "screen_xy": [
+          795.5997032336695,
+          552.4801466722843
+        ],
+        "ndc_xyz": [
+          0.25886028992669224,
+          -0.001143206362581511,
+          -0.6638381940299104
+        ]
+      }
+    },
+    "old_oblique_landmarks": {
+      "L": {
+        "label": "LEFT museum structure",
+        "raster_uv": [
+          128,
+          60
+        ],
+        "agl_m": 10.096689224243164,
+        "world_physical_xyz": [
+          -212.81204111600587,
+          10.096689224243164,
+          159.8633257403189
+        ],
+        "screen_xy": [
+          574.9940823647722,
+          713.3351329047784
+        ],
+        "ndc_xyz": [
+          -0.09019923676460086,
+          -0.3841312688209011,
+          0.9998885518710271
+        ]
+      },
+      "R": {
+        "label": "RIGHT statue structure",
+        "raster_uv": [
+          390,
+          300
+        ],
+        "agl_m": 9.29338264465332,
+        "world_physical_xyz": [
+          49.57268722466961,
+          9.29338264465332,
+          -80.68337129840546
+        ],
+        "screen_xy": [
+          618.3404219057113,
+          506.23305556549036
+        ],
+        "ndc_xyz": [
+          -0.021613256478304973,
+          0.10896891532026097,
+          0.9999202915582653
+        ]
+      },
+      "T": {
+        "label": "TOP shoreline landmark",
+        "raster_uv": [
+          96,
+          24
+        ],
+        "agl_m": 0.2341141551733017,
+        "world_physical_xyz": [
+          -244.8590308370044,
+          0.2341141551733017,
+          195.94533029612757
+        ],
+        "screen_xy": [
+          572.7550481561892,
+          761.273074271183
+        ],
+        "ndc_xyz": [
+          -0.09374201241109296,
+          -0.49826922445519767,
+          0.9998833403474519
+        ]
+      },
+      "B": {
+        "label": "BOTTOM shoreline landmark",
+        "raster_uv": [
+          379,
+          410
+        ],
+        "agl_m": 2.537416934967041,
+        "world_physical_xyz": [
+          38.55653450807637,
+          2.537416934967041,
+          -190.9339407744875
+        ],
+        "screen_xy": [
+          556.5272374683898,
+          479.9507986933031
+        ],
+        "ndc_xyz": [
+          -0.11941892805634523,
+          0.17154571739689736,
+          0.9999252639509737
+        ]
+      }
+    },
+    "image_aligned_landmarks": {
+      "L": {
+        "label": "LEFT museum structure",
+        "raster_uv": [
+          128,
+          60
+        ],
+        "agl_m": 10.096689224243164,
+        "world_physical_xyz": [
+          -212.81204111600587,
+          10.096689224243164,
+          159.8633257403189
+        ],
+        "screen_xy": [
+          464.4163729312987,
+          453.5682334215766
+        ],
+        "ndc_xyz": [
+          -0.2651639668808564,
+          0.23436134899624622,
+          0.999922788856932
+        ]
+      },
+      "R": {
+        "label": "RIGHT statue structure",
+        "raster_uv": [
+          390,
+          300
+        ],
+        "agl_m": 9.29338264465332,
+        "world_physical_xyz": [
+          49.57268722466961,
+          9.29338264465332,
+          -80.68337129840546
+        ],
+        "screen_xy": [
+          677.9400484584962,
+          592.1765320730758
+        ],
+        "ndc_xyz": [
+          0.0726899500925573,
+          -0.09565840969779951,
+          0.9999073286276166
+        ]
+      },
+      "T": {
+        "label": "TOP shoreline landmark",
+        "raster_uv": [
+          96,
+          24
+        ],
+        "agl_m": 0.2341141551733017,
+        "world_physical_xyz": [
+          -244.8590308370044,
+          0.2341141551733017,
+          195.94533029612757
+        ],
+        "screen_xy": [
+          448.80749886138346,
+          466.70024968076905
+        ],
+        "ndc_xyz": [
+          -0.2898615524345199,
+          0.20309464361721657,
+          0.999927154131212
+        ]
+      },
+      "B": {
+        "label": "BOTTOM shoreline landmark",
+        "raster_uv": [
+          379,
+          410
+        ],
+        "agl_m": 2.537416934967041,
+        "world_physical_xyz": [
+          38.55653450807637,
+          2.537416934967041,
+          -190.9339407744875
+        ],
+        "screen_xy": [
+          669.9491367659818,
+          693.4364541886632
+        ],
+        "ndc_xyz": [
+          0.060046102477819295,
+          -0.33675346235396003,
+          0.9999009417783075
+        ]
+      }
+    },
+    "reset_landmarks": {
+      "L": {
+        "label": "LEFT museum structure",
+        "raster_uv": [
+          128,
+          60
+        ],
+        "agl_m": 10.096689224243164,
+        "world_physical_xyz": [
+          -212.81204111600587,
+          10.096689224243164,
+          159.8633257403189
+        ],
+        "screen_xy": [
+          464.4163729312987,
+          453.5682334215766
+        ],
+        "ndc_xyz": [
+          -0.2651639668808564,
+          0.23436134899624622,
+          0.999922788856932
+        ]
+      },
+      "R": {
+        "label": "RIGHT statue structure",
+        "raster_uv": [
+          390,
+          300
+        ],
+        "agl_m": 9.29338264465332,
+        "world_physical_xyz": [
+          49.57268722466961,
+          9.29338264465332,
+          -80.68337129840546
+        ],
+        "screen_xy": [
+          677.9400484584962,
+          592.1765320730758
+        ],
+        "ndc_xyz": [
+          0.0726899500925573,
+          -0.09565840969779951,
+          0.9999073286276166
+        ]
+      },
+      "T": {
+        "label": "TOP shoreline landmark",
+        "raster_uv": [
+          96,
+          24
+        ],
+        "agl_m": 0.2341141551733017,
+        "world_physical_xyz": [
+          -244.8590308370044,
+          0.2341141551733017,
+          195.94533029612757
+        ],
+        "screen_xy": [
+          448.80749886138346,
+          466.70024968076905
+        ],
+        "ndc_xyz": [
+          -0.2898615524345199,
+          0.20309464361721657,
+          0.999927154131212
+        ]
+      },
+      "B": {
+        "label": "BOTTOM shoreline landmark",
+        "raster_uv": [
+          379,
+          410
+        ],
+        "agl_m": 2.537416934967041,
+        "world_physical_xyz": [
+          38.55653450807637,
+          2.537416934967041,
+          -190.9339407744875
+        ],
+        "screen_xy": [
+          669.9491367659818,
+          693.4364541886632
+        ],
+        "ndc_xyz": [
+          0.060046102477819295,
+          -0.33675346235396003,
+          0.9999009417783075
+        ]
+      }
+    },
+    "top_checks": {
+      "top_left_is_left_of_top_right": true,
+      "bottom_left_is_left_of_bottom_right": true,
+      "top_left_is_above_bottom_left": true,
+      "top_right_is_above_bottom_right": true,
+      "quarter_left_is_left_of_quarter_right": true
+    },
+    "image_aligned_checks": {
+      "left_structure_screen_left_of_right_structure": true,
+      "top_landmark_screen_above_bottom_landmark": true,
+      "camera_x_centered": true,
+      "camera_on_image_bottom_side": true,
+      "camera_above_surface": true,
+      "transition_from_2d_defaults_image_aligned": true
+    },
+    "reset_checks": {
+      "free_orbit_changed_camera": true,
+      "reset_reactivates_image_orientation": true,
+      "reset_screen_coordinates_repeat": true,
+      "reset_camera_position_repeat": true
+    },
+    "reset_max_screen_error_px": 0.0
+  },
+  "comparison_scenes": {
+    "NYC_00735": {
+      "status": "PASS",
+      "left_raster_uv": [
+        256,
+        512
+      ],
+      "right_raster_uv": [
+        767,
+        512
+      ],
+      "left_screen_xy": [
+        509.15937639258124,
+        562.6329895530071
+      ],
+      "right_screen_xy": [
+        754.8361463813803,
+        562.6672537317831
+      ],
+      "left_screen_is_left": true,
+      "camera": {
+        "type": "PerspectiveCamera",
+        "position": [
+          8.245482118133051e-14,
+          661.428017876687,
+          -673.294710268616
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "quaternion": [
+          -2.2666195733527463e-17,
+          0.9289651995381276,
+          0.3701670677506127,
+          5.688271290668251e-17
+        ],
+        "target": [
+          0,
+          23.569871306419373,
+          0
+        ],
+        "reflectImageX": true,
+        "near": 0.05,
+        "far": 8710.290365910487
+      }
+    },
+    "NYC_01086": {
+      "status": "PASS",
+      "left_raster_uv": [
+        256,
+        512
+      ],
+      "right_raster_uv": [
+        767,
+        512
+      ],
+      "left_screen_xy": [
+        510.3681827275677,
+        569.6642273115513
+      ],
+      "right_screen_xy": [
+        754.3423570625966,
+        564.2135042279729
+      ],
+      "left_screen_is_left": true,
+      "camera": {
+        "type": "PerspectiveCamera",
+        "position": [
+          8.2651374268843e-14,
+          673.2421773253643,
+          -674.899688027504
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "quaternion": [
+          -2.2666195733527463e-17,
+          0.9289651995381276,
+          0.3701670677506127,
+          5.688271290668251e-17
+        ],
+        "target": [
+          0,
+          33.86352550983429,
+          0
+        ],
+        "reflectImageX": true,
+        "near": 0.05,
+        "far": 8731.053669256755
+      }
+    },
+    "NYC_01103": {
+      "status": "PASS",
+      "left_raster_uv": [
+        256,
+        512
+      ],
+      "right_raster_uv": [
+        767,
+        512
+      ],
+      "left_screen_xy": [
+        508.90733074209646,
+        561.1043233957889
+      ],
+      "right_screen_xy": [
+        755.0874486501833,
+        561.1442596943737
+      ],
+      "left_screen_is_left": true,
+      "camera": {
+        "type": "PerspectiveCamera",
+        "position": [
+          8.241980177486487e-14,
+          658.8656229155054,
+          -673.0087551141173
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "quaternion": [
+          -2.2666195733527463e-17,
+          0.9289651995381276,
+          0.3701670677506127,
+          5.688271290668251e-17
+        ],
+        "target": [
+          0,
+          21.278381228446957,
+          0
+        ],
+        "reflectImageX": true,
+        "near": 0.05,
+        "far": 8706.591016443866
+      }
+    },
+    "NYC_01270": {
+      "status": "PASS",
+      "left_raster_uv": [
+        256,
+        512
+      ],
+      "right_raster_uv": [
+        767,
+        512
+      ],
+      "left_screen_xy": [
+        507.4883492836885,
+        551.8337463612634
+      ],
+      "right_screen_xy": [
+        756.5064997946198,
+        551.8730840403473
+      ],
+      "left_screen_is_left": true,
+      "camera": {
+        "type": "PerspectiveCamera",
+        "position": [
+          8.22827638159341e-14,
+          644.5079336743127,
+          -671.8897552602315
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "quaternion": [
+          -2.2666195733527463e-17,
+          0.9289651995381276,
+          0.3701670677506127,
+          5.688271290668251e-17
+        ],
+        "target": [
+          0,
+          7.980797111988068,
+          0
+        ],
+        "reflectImageX": true,
+        "near": 0.05,
+        "far": 8692.114720257212
+      }
+    },
+    "scene_22099217": {
+      "status": "PASS",
+      "left_raster_uv": [
+        255,
+        314
+      ],
+      "right_raster_uv": [
+        765,
+        314
+      ],
+      "left_screen_xy": [
+        484.2705033308766,
+        550.9331339652149
+      ],
+      "right_screen_xy": [
+        773.1530600960225,
+        593.3040962813063
+      ],
+      "left_screen_is_left": true,
+      "camera": {
+        "type": "PerspectiveCamera",
+        "position": [
+          1.38571452581355e-13,
+          1183.1540736816407,
+          -1131.5217798130354
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "quaternion": [
+          -2.2666195733527466e-17,
+          0.9289651995381276,
+          0.37016706775061275,
+          5.688271290668251e-17
+        ],
+        "target": [
+          0,
+          111.18607175350189,
+          0
+        ],
+        "reflectImageX": true,
+        "near": 0.0609928752051194,
+        "far": 14638.290049228657
+      }
+    }
+  },
+  "artifact_hashes_before": {
+    "m2_final": "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+    "agl": "653b99e3678005f4131d756b7799ce53f802f661d17bb7fe88aef85fffe1a709",
+    "glb": "e8a98a00552c5e50a6e2a67c7a74c1ef513d6c711a1fc59acfcbabae50697451"
+  },
+  "artifact_hashes_after": {
+    "m2_final": "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+    "agl": "653b99e3678005f4131d756b7799ce53f802f661d17bb7fe88aef85fffe1a709",
+    "glb": "e8a98a00552c5e50a6e2a67c7a74c1ef513d6c711a1fc59acfcbabae50697451"
+  },
+  "invariants": {
+    "m2_final_hash_unchanged": true,
+    "primary_agl_hash_unchanged": true,
+    "all_scene_agl_hashes_unchanged": true,
+    "glb_hash_unchanged": true,
+    "glb_vertex_positions_bitwise_unchanged": true,
+    "glb_uvs_bitwise_unchanged": true
+  },
+  "screenshots": {
+    "A_original_2d": "C:\\DepthWizard-SIH26175\\outputs\\image_aligned_orientation_validation\\20260903\\screenshots\\A_original_2d_rgb_markers.png",
+    "B_orthographic_top": "C:\\DepthWizard-SIH26175\\outputs\\image_aligned_orientation_validation\\20260903\\screenshots\\B_orthographic_top_markers.png",
+    "C_image_aligned_oblique": "C:\\DepthWizard-SIH26175\\outputs\\image_aligned_orientation_validation\\20260903\\screenshots\\C_image_aligned_oblique_markers.png",
+    "D_free_orbit_rotated": "C:\\DepthWizard-SIH26175\\outputs\\image_aligned_orientation_validation\\20260903\\screenshots\\D_free_orbit_rotated_markers.png",
+    "E_reset_image_orientation": "C:\\DepthWizard-SIH26175\\outputs\\image_aligned_orientation_validation\\20260903\\screenshots\\E_reset_image_orientation_markers.png"
+  },
+  "overall_status": "PASS"
+}

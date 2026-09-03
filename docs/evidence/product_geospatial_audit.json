@@ -1,0 +1,12 @@
+{
+  "test_name": "Player 6 Geospatial & Absolute DSM Numerical Audit",
+  "status": "PASS",
+  "geotiff_crs": "EPSG:32618",
+  "geotiff_dimensions": [
+    1024,
+    1024
+  ],
+  "geotiff_gsd_m": 0.5,
+  "dsm_dem_agl_max_deviation_m": 0.0,
+  "non_georeferenced_policy": "Strictly transparent: no fake CRS/bounds without metadata, optional user GSD allowed"
+}

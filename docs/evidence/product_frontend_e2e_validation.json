@@ -1,0 +1,81 @@
+{
+  "test_name": "Player 5 Live Frontend-Backend E2E Validation",
+  "status": "PASS",
+  "timestamp": "2026-09-01T16:01:38Z",
+  "total_runtime_s": 19.03,
+  "backend_health": {
+    "status": "ok",
+    "version": "1.0.0",
+    "model": {
+      "loaded": true,
+      "name": "M1 RDAH-Net + Frozen DAV2 Small",
+      "device": "cuda",
+      "checkpoint_path": "C:\\DepthWizard-SIH26175\\outputs\\player1_stage_a\\a1_rdah\\checkpoints\\best_mae_model.pth",
+      "vram_allocated_mb": 115.2
+    },
+    "gpu": {
+      "available": true,
+      "device_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "total_memory_mb": 8187.5,
+      "allocated_memory_mb": 115.2,
+      "free_memory_mb": 8072.3
+    },
+    "modules": {
+      "inference_service": true,
+      "geospatial_service": true,
+      "geometry_3d_engine": true,
+      "job_manager": true
+    }
+  },
+  "job_id": "a9576537-4f3b-42bf-8254-99ddea451310",
+  "scene_id": "e2e_frontend_verified",
+  "stages_observed": [
+    "generating_3d",
+    "completed"
+  ],
+  "glb_mesh_size_mb": 10.06,
+  "ply_pointcloud_size_mb": 5.25,
+  "inspection_result": {
+    "scene_id": "e2e_frontend_verified",
+    "pixel": [
+      512,
+      512
+    ],
+    "predicted_agl_m": 1.4394254684448242,
+    "absolute_elevation_m": null,
+    "semantic_class": "Tree / Vegetation",
+    "slope_deg": 30.609272003173828,
+    "world_coordinates_m": {
+      "x": 0.0,
+      "z": 0.0
+    },
+    "is_georeferenced": false
+  },
+  "measurement_result": {
+    "scene_id": "e2e_frontend_verified",
+    "horizontal_distance_m": 282.842712474619,
+    "direct_3d_distance_m": 282.84271317566726,
+    "elevation_delta_m": -0.019914135336875916,
+    "slope_angle_deg": 0.004034029710673013,
+    "start_elevation_m": 0.24032242596149445,
+    "end_elevation_m": 0.22040829062461853
+  },
+  "elevation_statistics": {
+    "type": "AGL",
+    "unit": "metres",
+    "min_m": 0.14330582320690155,
+    "max_m": 8.377424240112305,
+    "mean_m": 0.9622993469238281,
+    "median_m": 0.25619661808013916,
+    "std_m": 1.6024318933486938
+  },
+  "spatial_parameters": {
+    "is_georeferenced": false,
+    "crs": null,
+    "gsd_m": 0.5,
+    "physical_width_m": 512.0,
+    "physical_height_m": 512.0,
+    "bounds": null,
+    "transform": null
+  }
+}
