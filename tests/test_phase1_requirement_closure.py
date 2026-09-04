@@ -478,8 +478,8 @@ def test_case_h_corrupted_image_rejection(tmp_path):
 
 def test_m2_final_checkpoint_integrity():
     """Verify that M2-FINAL checkpoint SHA-256 matches the officially sealed constant."""
-    expected_sha = "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
-    ckpt_path = Path(settings.MODEL_CHECKPOINT)
+    expected_sha = settings.M2_MODEL_CHECKPOINT_SHA256
+    ckpt_path = Path(settings.M2_MODEL_CHECKPOINT)
 
     assert ckpt_path.exists(), f"M2-FINAL checkpoint not found at {ckpt_path}"
 
@@ -492,3 +492,22 @@ def test_m2_final_checkpoint_integrity():
     assert actual_sha == expected_sha, (
         f"M2-FINAL checkpoint SHA-256 mismatch!\nExpected: {expected_sha}\nActual:   {actual_sha}"
     )
+
+
+def test_m3_final_checkpoint_integrity():
+    """Verify that promoted M3-FINAL checkpoint SHA-256 matches the official constant."""
+    expected_sha = settings.M3_MODEL_CHECKPOINT_SHA256
+    ckpt_path = Path(settings.M3_MODEL_CHECKPOINT)
+
+    assert ckpt_path.exists(), f"M3-FINAL checkpoint not found at {ckpt_path}"
+
+    hasher = hashlib.sha256()
+    with open(ckpt_path, "rb") as f:
+        while chunk := f.read(65536):
+            hasher.update(chunk)
+    actual_sha = hasher.hexdigest().lower()
+
+    assert actual_sha == expected_sha, (
+        f"M3-FINAL checkpoint SHA-256 mismatch!\nExpected: {expected_sha}\nActual:   {actual_sha}"
+    )
+

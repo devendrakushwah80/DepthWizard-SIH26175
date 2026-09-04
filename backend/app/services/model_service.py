@@ -2,8 +2,8 @@
 DepthWizard (SIH26175) — Singleton Model Service
 Player 4: Backend & Systems Integration Lead
 
-Loads the sealed M2-FINAL RDAH-Net and frozen Depth Anything V2 Small models once
-and manages thread-safe GPU inference execution.
+Loads the production AGL neural network (M3-FINAL by default, or sealed M2-FINAL)
+and frozen Depth Anything V2 Small models once and manages thread-safe GPU inference.
 """
 
 import os
@@ -11,12 +11,35 @@ import sys
 import time
 import threading
 import hashlib
+from typing import Optional
 import torch
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 from src.models.rdah_net import RDAHNetCore
+from src.models.m3_net import M3NetCore
 from src.models.dav2_wrapper import DepthAnythingV2Wrapper
 from backend.app.config import settings
+
+
+class M3AsM2Adapter(torch.nn.Module):
+    """
+    Adapter enabling M3NetCore to accept legacy (depth, rgb) parameter ordering
+    for backward compatibility with existing pipeline callers.
+    """
+    def __init__(self, m3_core: M3NetCore, device: str):
+        super().__init__()
+        self.m3_core = m3_core
+        self.device = device
+
+    def forward(self, depth_patch: torch.Tensor, rgb_patch: torch.Tensor, gsd_m: Optional[float] = None, **kwargs):
+        if gsd_m is not None and float(gsd_m) > 0:
+            gsd_val = torch.tensor([[float(gsd_m)]], dtype=torch.float32, device=self.device)
+            gsd_known = torch.tensor([[1.0]], dtype=torch.float32, device=self.device)
+        else:
+            gsd_val = torch.tensor([[0.5]], dtype=torch.float32, device=self.device)
+            gsd_known = torch.tensor([[0.0]], dtype=torch.float32, device=self.device)
+        return self.m3_core(rgb_patch, depth_patch, gsd_m=gsd_val, gsd_known=gsd_known)
+
 
 class ModelService:
     _instance = None
@@ -32,7 +55,9 @@ class ModelService:
                 cls._instance.gpu_lock = threading.Lock()
                 cls._instance.load_time_s = 0.0
                 cls._instance.dav2_model = None
+                cls._instance.model = None
                 cls._instance.m2_model = None
+                cls._instance.model_family = settings.MODEL_NAME
                 cls._instance.checkpoint_sha256 = None
             return cls._instance
 
@@ -63,10 +88,10 @@ class ModelService:
             parameter.requires_grad = False
         self.dav2_model.model.eval()
 
-        # 3. SHA-gated M2-FINAL load. There is deliberately no M1 fallback.
+        # 3. SHA-gated Model load (M3-FINAL by default, or sealed M2-FINAL).
         checkpoint_path = settings.MODEL_CHECKPOINT
         if not os.path.isfile(checkpoint_path):
-            raise RuntimeError(f"M2-FINAL checkpoint not found: {checkpoint_path}")
+            raise RuntimeError(f"Model checkpoint not found: {checkpoint_path}")
 
         digest = hashlib.sha256()
         with open(checkpoint_path, "rb") as checkpoint_file:
@@ -75,27 +100,49 @@ class ModelService:
         self.checkpoint_sha256 = digest.hexdigest()
         if self.checkpoint_sha256.lower() != settings.MODEL_CHECKPOINT_SHA256.lower():
             raise RuntimeError(
-                "M2-FINAL checkpoint SHA256 mismatch: "
+                f"{settings.MODEL_NAME} checkpoint SHA256 mismatch: "
                 f"expected {settings.MODEL_CHECKPOINT_SHA256}, got {self.checkpoint_sha256}"
             )
 
-        print(f"[ModelService] Loading sealed M2-FINAL checkpoint: {checkpoint_path}...")
-        self.m2_model = RDAHNetCore(
-            d_model=32,
-            num_heads=4,
-            output_parameterization=settings.MODEL_OUTPUT_PARAMETERIZATION,
-        )
-        try:
-            state_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
-            self.m2_model.load_state_dict(state_dict, strict=True)
-        except Exception as exc:
-            self.m2_model = None
-            raise RuntimeError(f"M2-FINAL checkpoint could not be loaded: {exc}") from exc
+        print(f"[ModelService] Loading verified {settings.MODEL_NAME} checkpoint: {checkpoint_path}...")
+        raw_state = torch.load(checkpoint_path, map_location="cpu")
+        state_dict = raw_state.get("model_state_dict", raw_state) if isinstance(raw_state, dict) else raw_state
 
-        self.m2_model.to(self.device).eval()
-        print(f"[ModelService] M2-FINAL verified and loaded ({self.checkpoint_sha256}).")
+        if settings.MODEL_NAME == "M3-FINAL":
+            self.model_family = "M3-FINAL"
+            core_model = M3NetCore(
+                enable_gsd_conditioning=True,
+                d_model=32,
+                num_heads=4,
+                output_parameterization=settings.MODEL_OUTPUT_PARAMETERIZATION,
+            )
+            core_model.load_state_dict(state_dict, strict=True)
+            core_model.to(self.device).eval()
+            self.model = core_model
+            self.m2_model = M3AsM2Adapter(core_model, self.device)
+        else:
+            self.model_family = "M2-FINAL"
+            cleaned_state = {}
+            for k, v in state_dict.items():
+                if k.startswith("rdah_core."):
+                    cleaned_state[k[10:]] = v
+                elif k.startswith("base."):
+                    cleaned_state[k[5:]] = v
+                else:
+                    cleaned_state[k] = v
+            core_model = RDAHNetCore(
+                d_model=32,
+                num_heads=4,
+                output_parameterization=settings.MODEL_OUTPUT_PARAMETERIZATION,
+            )
+            core_model.load_state_dict(cleaned_state, strict=True)
+            core_model.to(self.device).eval()
+            self.model = core_model
+            self.m2_model = core_model
 
-        # 4. Concurrency Guard Lock for RTX 4060 GPU
+        print(f"[ModelService] {self.model_family} verified and loaded ({self.checkpoint_sha256}).")
+
+        # 4. Concurrency Guard Lock for GPU
         self.gpu_lock = threading.Lock()
         
         self.load_time_s = time.time() - t0
@@ -104,11 +151,25 @@ class ModelService:
         vram_mb = torch.cuda.memory_allocated(0) / (1024 * 1024) if self.device == "cuda" else 0.0
         print(f"[ModelService] Model Service Initialized in {self.load_time_s:.2f}s (Allocated VRAM: {vram_mb:.1f} MB)")
 
+    def predict_patch(
+        self,
+        depth_patch: torch.Tensor,
+        rgb_patch: torch.Tensor,
+        gsd_m: Optional[float] = None,
+    ) -> torch.Tensor:
+        """
+        Executes inference on a single crop patch using the active model.
+        """
+        if self.model_family == "M3-FINAL":
+            return self.m2_model(depth_patch, rgb_patch, gsd_m=gsd_m)
+        else:
+            return self.model(depth_patch, rgb_patch)
+
     def ensure_initialized(self):
         if (
             not getattr(self, '_initialized', False)
             or self.dav2_model is None
-            or self.m2_model is None
+            or self.model is None
         ):
             self.initialize()
 
@@ -119,7 +180,8 @@ class ModelService:
         
         return {
             'loaded': self._initialized,
-            'name': 'M2-FINAL + Frozen Depth Anything V2 Small',
+            'name': f"{self.model_family} + Frozen Depth Anything V2 Small",
+            'model_family': self.model_family,
             'device': self.device,
             'checkpoint_path': settings.MODEL_CHECKPOINT,
             'checkpoint_sha256': self.checkpoint_sha256,

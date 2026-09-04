@@ -7,6 +7,7 @@ and 2D Hanning window overlap blending.
 """
 
 import time
+from typing import Optional
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -34,7 +35,7 @@ class InferenceService:
         if device == "cuda":
             torch.cuda.synchronize()
 
-    def predict_height_map(self, rgb_image: np.ndarray) -> dict:
+    def predict_height_map(self, rgb_image: np.ndarray, gsd_m: Optional[float] = None) -> dict:
         """
         Runs full-resolution height estimation on RGB optical input (H, W, 3) [0..255 uint8 or float].
         Returns:
@@ -114,7 +115,7 @@ class InferenceService:
                         rgb_patch = rgb_t[:, :, y0:y1, x0:x1].to(model_service.device)
                         depth_patch = depth_t[:, :, y0:y1, x0:x1].to(model_service.device)
 
-                        patch_out = model_service.m2_model(depth_patch, rgb_patch)
+                        patch_out = model_service.predict_patch(depth_patch, rgb_patch, gsd_m=gsd_m)
                         p_np = patch_out.squeeze().cpu().numpy().astype(np.float32)
 
                         pred_canvas[y0:y1, x0:x1] += p_np * self.window
@@ -122,9 +123,9 @@ class InferenceService:
 
             weight_canvas = np.maximum(weight_canvas, 1e-6)
             predicted_agl = (pred_canvas / weight_canvas)[:H, :W]
-            # M2 uses softplus; this guard catches numerical/model-contract failure.
+            # softplus/relu; this guard catches numerical/model-contract failure.
             if not np.isfinite(predicted_agl).all() or np.any(predicted_agl < 0):
-                raise RuntimeError("M2-FINAL produced invalid non-finite or negative AGL")
+                raise RuntimeError(f"{model_service.model_family} produced invalid non-finite or negative AGL")
             self._synchronize(model_service.device)
             rdah_time = time.time() - t_rdah0
             peak_vram_mb = (

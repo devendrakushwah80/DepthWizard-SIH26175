@@ -13,6 +13,7 @@ from backend.app.schemas.jobs import JobStatus
 from backend.app.services.inference_service import inference_service
 from backend.app.services.geospatial_service import geospatial_service
 from backend.app.services.scene_service import scene_service
+from backend.app.services.model_service import model_service
 
 
 class JobService:
@@ -153,9 +154,9 @@ class JobService:
                 job_id,
                 status=JobStatus.RUNNING_INFERENCE,
                 progress_pct=40,
-                current_stage="Running frozen DAV2 Small + M2-FINAL AGL inference",
+                current_stage=f"Running frozen DAV2 Small + {model_service.model_family} AGL inference",
             )
-            infer_result = inference_service.predict_height_map(rgb_arr)
+            infer_result = inference_service.predict_height_map(rgb_arr, gsd_m=spatial_meta.get("gsd_m"))
             predicted_agl = infer_result["predicted_agl_m"]
             relative_surface = infer_result.get("relative_surface")
 

@@ -5,12 +5,13 @@
 
 ---
 
-## 1. High-Rise Upper-Tail Compression
+## 1. High-Rise Upper-Tail Compression (Substantially Reduced; Extreme $\ge$50m Underestimation Remains)
 
-* **Description:** Extreme vertical structures ($> 20\text{m}$ and $> 50\text{m}$) are underestimated (mean predicted height $\approx 5.34\text{m}$ vs ground truth $\approx 66.97\text{m}$ for $> 50\text{m}$ structures).
-* **Root Cause:** Ground-truth training distribution is overwhelmingly ground/low-rise ($> 76\%$ pixels $< 2\text{m}$), leading to strong regression shrinkage toward the median.
-* **Current Mitigation:** Full transparency in UI model card, elevation colorbars, and statistical metrics; Smooth L1 loss limits extreme gradient explosion.
-* **Future Work:** Asymmetric log-scaled loss, focal height reweighting, and high-rise fine-tuning subsets.
+* **Description:** Extreme vertical structures ($> 20\text{m}$ and $> 50\text{m}$) historically suffered from regression shrinkage in M2 due to natural class imbalance ($< 2\text{m}$ pixels account for $> 56\%$ of urban scenes).
+* **M3-FINAL Mitigation:** Through height-aware tile sampling (oversampling high-rise regions 4x) and capped height-weighted composite loss ($1.0 + \min(0.35, y/50)$ with tall bias penalty), high-rise compression was substantially reduced:
+  - 20–50m high-rise structure MAE dropped by **59.9%** on DEV (19.18m down to 7.69m) and **63.8%** on Holdout (17.85m down to 6.47m).
+  - Skyscraper ($\ge 50\text{m}$) MAE was reduced from 53.33m down to 33.36m on Holdout, and from 35.83m down to 29.52m on NYC.
+* **Remaining Limitation:** Extreme skyscrapers ($\ge 50\text{m}$ and megatall $> 100\text{m}$) remain heavily under-represented in nadir training data and exhibit residual negative shrinkage bias.
 
 ---
 
@@ -33,14 +34,20 @@
 ## 4. Unknown GSD for Non-Georeferenced Imagery
 
 * **Description:** Arbitrary PNG/JPG files lack spatial resolution metadata.
-* **Current Mitigation:** Application prompts user for optional GSD. If unsupplied, physical horizontal distances and metric slope are marked approximate, never fabricating fake $0.5\text{ m/px}$ or fake geographic coordinates.
+* **Current Mitigation:** Application prompts user for optional GSD. If unsupplied, physical horizontal distances and metric slope are marked approximate, never fabricating fake $0.5\text{ m/px}$ or fake geographic coordinates. M3-FINAL dynamically adapts via its GSD FiLM vector $[GSD_m, GSD_{known}]$.
 
 ---
 
-## 5. Unrepresented Mountainous & Wild Forest Domains
+## 5. Natural Mountainous & Wild Forest Domains (Ground-Truth Audit & Canopy Validation)
 
-* **Description:** The GAMUS training and validation dataset covers urban/suburban coastal cities (Philadelphia, Washington DC, New York City).
-* **Current Mitigation:** Hilly and Dense Wild Forest categories are explicitly designated `NOT VALIDATED` in compliance with scientific integrity rules.
+* **Prior Benchmark Audit & Root Cause:** An exhaustive scientific audit of the 10 NAIP / 3DEP Natural Benchmark AOIs revealed that the USGS `3DEPElevation/ImageServer` distributes exclusively bare-earth Digital Terrain Models (DTM/DEM). Top-surface DSM rasters were missing, and ground-truth AGL was fabricated as all zeros ($0.0\text{m}$) across all 2.62M pixels. When M3 correctly predicted tree heights (15–28m) over dense Appalachian or Pacific Northwest forests, the evaluator measured distance to $0.0\text{m}$, creating a false "15.8m error" while M2 (which heavily compressed heights near zero) appeared artificially closer to flat ground.
+* **Validated LiDAR Ground-Truth Benchmark:** When evaluated against a scientifically curated, 100% unseen natural benchmark with true airborne LiDAR $n\text{DSM} = \text{DSM} - \text{DTM}$ across 90 scenes (23.6M pixels):
+  - **Overall Natural MAE:** M2 = **2.6761m**, M3 = **2.8899m** (M3 is broadly comparable to M2 on the combined natural benchmark, while remaining slightly worse in MAE and exhibiting significant canopy-height underestimation).
+  - **Pixels within 2m:** M3 = **68.31%** (superior to M2's 67.92%).
+  - **Forest Canopy ($\ge$ 4m):** M2 = 5.413m, M3 = 5.762m (delta 0.35m, M3 exhibits strong negative bias of -5.47m).
+  - **Mixed Vegetation (2–15m):** M2 = 2.534m, M3 = 2.649m (delta 0.11m).
+  - **Bare / Sloped Terrain (< 1m):** M2 = 0.081m, M3 = 0.259m.
+* **Recommendation:** For mountainous bare terrain without vegetation, AGL is legitimately near zero; macroscopic geomorphic relief belongs to the base DEM ($\text{DSM} = \text{DEM} + \text{AGL}$). For wild forests, M3 preserves useful canopy structure cues but currently underestimates absolute forest canopy height; validated forest MAE is 5.76m with a negative bias of 5.47m.
 
 ---
 

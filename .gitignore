@@ -27,6 +27,8 @@ frontend/dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # IDE / OS
 .vscode/
@@ -35,8 +37,13 @@ yarn-error.log*
 Thumbs.db
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
 # Logs and local process state
+logs/
 *.log
 *.pid
 *.tmp
@@ -58,6 +65,7 @@ datasets/
 training_cache/
 cache/
 .cache/
+
 *.h5
 *.hdf5
 *.tif
@@ -65,10 +73,16 @@ cache/
 *.npy
 *.npz
 
-# Checkpoints are ignored by default; the verified production checkpoint is
-# intentionally distributed because it is below GitHub's single-file limit.
+# Model checkpoints
+# Ignore all training/experimental checkpoints by default.
 *.pth
+
+# Keep only verified production checkpoints in Git.
+!models/m2_final/
 !models/m2_final/M2_FINAL.pth
+
+!models/m3_final/
+!models/m3_final/M3_FINAL.pth
 
 # Browser/debug artifacts
 chrome-profile/
@@ -78,3 +92,9 @@ screenshots/
 
 # Legacy standalone viewer and generated demo scenes
 visualization/
+
+# M3 Phase 2 local datasets / experiments / generated evidence
+data/m3/
+models/m3/
+models/m3_experiments/
+outputs/m3/

@@ -23,9 +23,9 @@ survey-grade DEM. See [Known Limitations](docs/KNOWN_LIMITATIONS.md).
 
 ## Included components
 
-- PyTorch M2-FINAL RDAH regression head with a frozen Depth Anything V2 Small prior
-- FastAPI upload, inference, geospatial validation, inspection, measurement, and
-  scene-asset APIs
+- PyTorch M3-FINAL multi-domain regression model with GSD FiLM conditioning and frozen Depth Anything V2 Small prior
+- Sealed M2-FINAL baseline checkpoint preserved for comparative traceability
+- FastAPI upload, inference, geospatial validation, inspection, measurement, and scene-asset APIs
 - React, Three.js, and Vite frontend with 2D comparison and interactive 3D views
 - GLB/OBJ mesh, PLY point-cloud, AGL GeoTIFF, and optional absolute DSM GeoTIFF export
 - Deterministic data splits, model manifest, tests, and lightweight evaluation evidence
@@ -38,9 +38,12 @@ survey-grade DEM. See [Known Limitations](docs/KNOWN_LIMITATIONS.md).
 - Internet access on the first run to obtain the configured frozen
   `depth-anything/Depth-Anything-V2-Small-hf` prior if it is not cached
 
-The sealed M2-FINAL checkpoint is included at
-`models/m2_final/M2_FINAL.pth`. Its expected SHA256 is:
+The production M3-FINAL checkpoint is located at `models/m3_final/M3_FINAL.pth`:
+```text
+db1a7646ef087f13284e5806cc8c7b22baf6a8bb23ed9935082db08bbb376330
+```
 
+The sealed M2-FINAL baseline checkpoint is preserved at `models/m2_final/M2_FINAL.pth`:
 ```text
 6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f
 ```

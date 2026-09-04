@@ -28,7 +28,7 @@ class _Dav2Stub:
     model = _FrozenModelStub()
 
 
-def _deterministic_inference(rgb: np.ndarray) -> dict:
+def _deterministic_inference(rgb: np.ndarray, *args, **kwargs) -> dict:
     height, width = rgb.shape[:2]
     yy, xx = np.mgrid[:height, :width]
     agl = (0.25 + 8.0 * (xx / max(width - 1, 1)) * (yy / max(height - 1, 1))).astype(np.float32)

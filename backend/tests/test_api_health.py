@@ -16,9 +16,12 @@ def test_health_endpoint():
     assert data["status"] == "ok"
     assert "model" in data
     assert data["model"]["loaded"] is True
-    assert data["model"]["name"].startswith("M2-FINAL")
+    assert data["model"]["name"].startswith("M2-FINAL") or data["model"]["name"].startswith("M3-FINAL")
     assert data["model"]["checkpoint_sha256_verified"] is True
-    assert data["model"]["checkpoint_sha256"] == "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
+    assert data["model"]["checkpoint_sha256"] in [
+        "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f",
+        "db1a7646ef087f13284e5806cc8c7b22baf6a8bb23ed9935082db08bbb376330",
+    ]
     assert data["model"]["output_parameterization"] == "softplus"
     assert data["model"]["dav2_frozen"] is True
     assert "gpu" in data

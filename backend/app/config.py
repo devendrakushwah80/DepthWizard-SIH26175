@@ -24,11 +24,33 @@ class Settings:
     
     # Paths
     BASE_DIR: Path = BASE_DIR
-    MODEL_NAME: str = "M2-FINAL"
-    MODEL_CHECKPOINT: str = _repository_path(
-        "DEPTHWIZARD_MODEL_CHECKPOINT", BASE_DIR / "models/m2_final/M2_FINAL.pth"
+    # Model family and checkpoints
+    MODEL_FAMILY: str = os.getenv("DEPTHWIZARD_MODEL_FAMILY", "M3-FINAL")
+    
+    M2_MODEL_CHECKPOINT: str = _repository_path(
+        "DEPTHWIZARD_M2_CHECKPOINT", BASE_DIR / "models/m2_final/M2_FINAL.pth"
     )
-    MODEL_CHECKPOINT_SHA256: str = "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
+    M2_MODEL_CHECKPOINT_SHA256: str = "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
+
+    M3_MODEL_CHECKPOINT: str = _repository_path(
+        "DEPTHWIZARD_M3_CHECKPOINT", BASE_DIR / "models/m3_final/M3_FINAL.pth"
+    )
+    M3_MODEL_CHECKPOINT_SHA256: str = "db1a7646ef087f13284e5806cc8c7b22baf6a8bb23ed9935082db08bbb376330"
+
+    # Active model configuration
+    if MODEL_FAMILY == "M2-FINAL":
+        MODEL_NAME: str = "M2-FINAL"
+        MODEL_CHECKPOINT: str = _repository_path(
+            "DEPTHWIZARD_MODEL_CHECKPOINT", BASE_DIR / "models/m2_final/M2_FINAL.pth"
+        )
+        MODEL_CHECKPOINT_SHA256: str = M2_MODEL_CHECKPOINT_SHA256
+    else:
+        MODEL_NAME: str = "M3-FINAL"
+        MODEL_CHECKPOINT: str = _repository_path(
+            "DEPTHWIZARD_MODEL_CHECKPOINT", BASE_DIR / "models/m3_final/M3_FINAL.pth"
+        )
+        MODEL_CHECKPOINT_SHA256: str = M3_MODEL_CHECKPOINT_SHA256
+
     MODEL_OUTPUT_PARAMETERIZATION: str = "softplus"
     DAV2_MODEL_ID: str = os.getenv(
         "DEPTHWIZARD_DAV2_MODEL_ID", "depth-anything/Depth-Anything-V2-Small-hf"

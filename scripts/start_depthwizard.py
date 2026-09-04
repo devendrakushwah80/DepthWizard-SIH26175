@@ -19,6 +19,7 @@ import functools
 print = functools.partial(print, flush=True)
 
 M2_EXPECTED_SHA256 = "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
+M3_EXPECTED_SHA256 = "db1a7646ef087f13284e5806cc8c7b22baf6a8bb23ed9935082db08bbb376330"
 DAV2_MODEL_ID = "depth-anything/Depth-Anything-V2-Small-hf"
 
 def is_port_in_use(port):
@@ -56,18 +57,27 @@ def run_preflight_checks(project_root: str):
     print("  ISRO DEPTHWIZARD (SIH26175) — STARTUP PREFLIGHT CHECKLIST")
     print("=" * 80)
 
-    # 1. M2 Checkpoint Present
-    ckpt_path = os.path.join(project_root, "models", "m2_final", "M2_FINAL.pth")
-    m2_present = os.path.exists(ckpt_path)
-
-    # 2. M2 Checkpoint SHA-256 Verified
+    # 1. M2 Checkpoint Present & SHA
+    m2_ckpt = os.path.join(project_root, "models", "m2_final", "M2_FINAL.pth")
+    m2_present = os.path.exists(m2_ckpt)
     m2_sha_ok = False
     if m2_present:
         hasher = hashlib.sha256()
-        with open(ckpt_path, "rb") as f:
+        with open(m2_ckpt, "rb") as f:
             while chunk := f.read(65536):
                 hasher.update(chunk)
         m2_sha_ok = (hasher.hexdigest().lower() == M2_EXPECTED_SHA256)
+
+    # 2. M3 Checkpoint Present & SHA
+    m3_ckpt = os.path.join(project_root, "models", "m3_final", "M3_FINAL.pth")
+    m3_present = os.path.exists(m3_ckpt)
+    m3_sha_ok = False
+    if m3_present:
+        hasher = hashlib.sha256()
+        with open(m3_ckpt, "rb") as f:
+            while chunk := f.read(65536):
+                hasher.update(chunk)
+        m3_sha_ok = (hasher.hexdigest().lower() == M3_EXPECTED_SHA256)
 
     # 3. DAV2 Available / Cached
     dav2_cached = False
@@ -109,16 +119,17 @@ def run_preflight_checks(project_root: str):
     # 6. Runtime Configuration Valid
     storage_dir = os.path.join(project_root, "storage", "scenes")
     os.makedirs(storage_dir, exist_ok=True)
-    runtime_config_valid = m2_present and m2_sha_ok and outputs_writable
+    runtime_config_valid = (m3_present and m3_sha_ok) or (m2_present and m2_sha_ok) and outputs_writable
 
     # Report Preflight Checklist
-    print(f"  [1] M2 checkpoint present:             {'YES' if m2_present else 'NO'}")
-    print(f"  [2] M2 SHA verified:                    {'YES' if m2_sha_ok else 'NO'}")
-    print(f"  [3] DAV2 available/cached:              {'YES' if dav2_cached else 'NO'}")
-    print(f"  [4] CUDA available:                     {'YES' if cuda_available else 'NO'}")
-    print(f"  [5] Selected inference device:          {selected_device}")
-    print(f"  [6] Outputs directory writable:         {'YES' if outputs_writable else 'NO'}")
-    print(f"  [7] Required runtime config valid:      {'YES' if runtime_config_valid else 'NO'}")
+    print(f"  [1] Active Production Model:            {'M3-FINAL (FiLM GSD-Conditioned)' if m3_present else 'M2-FINAL'}")
+    print(f"  [2] M3 checkpoint present / SHA:        {'YES / VERIFIED' if (m3_present and m3_sha_ok) else 'NO'}")
+    print(f"  [3] M2 checkpoint present / SHA:        {'YES / VERIFIED' if (m2_present and m2_sha_ok) else 'NO'}")
+    print(f"  [4] DAV2 available/cached:              {'YES' if dav2_cached else 'NO'}")
+    print(f"  [5] CUDA available:                     {'YES' if cuda_available else 'NO'}")
+    print(f"  [6] Selected inference device:          {selected_device}")
+    print(f"  [7] Outputs directory writable:         {'YES' if outputs_writable else 'NO'}")
+    print(f"  [8] Required runtime config valid:      {'YES' if runtime_config_valid else 'NO'}")
     print("=" * 80)
 
     if not dav2_cached:
@@ -126,8 +137,8 @@ def run_preflight_checks(project_root: str):
         print("    python -c \"from transformers import AutoModelForDepthEstimation; AutoModelForDepthEstimation.from_pretrained('depth-anything/Depth-Anything-V2-Small-hf')\"")
         print("=" * 80)
 
-    if not m2_present or not m2_sha_ok:
-        print(f"[FATAL ERROR] M2-FINAL Checkpoint integrity failed. Exiting.")
+    if not (m3_present and m3_sha_ok) and not (m2_present and m2_sha_ok):
+        print(f"[FATAL ERROR] Model checkpoint integrity failed. Exiting.")
         sys.exit(1)
 
     return runtime_config_valid
