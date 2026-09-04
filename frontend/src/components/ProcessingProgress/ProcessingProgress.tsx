@@ -21,7 +21,7 @@ export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
 
   const stages = [
     { key: 'validating', label: 'Validation & Metadata', pct: 15, icon: FileCheck },
-    { key: 'running_inference', label: 'AI Height Estimation (M2-FINAL + Frozen DAV2)', pct: 40, icon: Cpu },
+    { key: 'running_inference', label: 'AI Height Estimation (M3-FINAL + Frozen DAV2)', pct: 40, icon: Cpu },
     { key: 'processing_geospatial', label: 'Geospatial & Slope Analysis', pct: 65, icon: Layers },
     { key: 'generating_3d', label: 'Watertight 3D Terrain & Point Cloud', pct: 80, icon: Box },
     { key: 'completed', label: 'Scene Ready for Analysis', pct: 100, icon: CheckCircle2 }

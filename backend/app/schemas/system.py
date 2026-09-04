@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 class ModelHealthInfo(BaseModel):
     loaded: bool = True
-    name: str = "M2-FINAL + Frozen Depth Anything V2 Small"
+    name: str = "M3-FINAL + Frozen Depth Anything V2 Small"
     device: str = "cuda"
     checkpoint_path: str
     vram_allocated_mb: float = 0.0

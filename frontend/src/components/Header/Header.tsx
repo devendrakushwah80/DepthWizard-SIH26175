@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex items-center space-x-1 text-slate-300">
                 <Cpu className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="font-mono text-[11px]">
-                  {health?.gpu.device_name || 'CPU'} ({health?.model.vram_allocated_mb.toFixed(0)}MB) · {health?.model.name || 'Model'}
+                  {health?.gpu?.device_name || 'CPU'} ({health?.model?.vram_allocated_mb != null ? `${health.model.vram_allocated_mb.toFixed(0)}MB` : '4GiB'}) · {health?.model?.name || 'M3-FINAL'}
                 </span>
               </div>
             </>

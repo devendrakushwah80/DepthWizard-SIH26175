@@ -1,0 +1,23 @@
+steps:
+  # 1. Build the production DepthWizard container from repository root
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '$_IMAGE_TAG'
+      - '-f'
+      - 'deploy/gcp/Dockerfile'
+      - '.'
+
+  # 2. Push container to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '$_IMAGE_TAG'
+
+images:
+  - '$_IMAGE_TAG'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY

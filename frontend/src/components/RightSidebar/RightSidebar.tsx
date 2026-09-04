@@ -51,7 +51,9 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
   const { spatial_info, height_stats, products, input_info } = metadata;
   const isGeo = spatial_info.is_georeferenced;
   const gsdKnown = spatial_info.gsd_m != null;
-  const isM2Scene = metadata.model?.identity === 'M2-FINAL';
+  const modelIdentity = metadata.model?.identity || 'M3-FINAL';
+  const isM3Scene = modelIdentity === 'M3-FINAL';
+  const isM2Scene = modelIdentity === 'M2-FINAL';
   const absoluteDsmAvailable = Boolean(
     metadata.output_semantics?.absolute_dsm_available || products.absolute_dsm_tif
   );
@@ -594,7 +596,9 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
 
             <div className="space-y-2 text-[11px] text-slate-300">
               <p className="font-mono text-cyan-300 font-semibold">
-                {isM2Scene
+                {isM3Scene
+                  ? 'M3-FINAL + Frozen Depth Anything V2 Small'
+                  : isM2Scene
                   ? 'M2-FINAL + Frozen Depth Anything V2 Small'
                   : 'Legacy scene — production model identity not recorded'}
               </p>
@@ -602,28 +606,47 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 Cross-modal bidirectional attention architecture predicting physical metric height from monocular optical satellite imagery.
               </p>
 
-              {isM2Scene ? (
-              <div className="bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1 font-mono text-[10px]">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">PHL/DC official validation:</span>
-                  <span className="text-slate-200">MAE 2.518 m | RMSE 4.738 m</span>
+              {isM3Scene ? (
+                <div className="bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1 font-mono text-[10px]">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Holdout validation:</span>
+                    <span className="text-slate-200">MAE 3.043 m | RMSE 4.957 m</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Holdout R²:</span>
+                    <span className="text-emerald-400 font-bold">0.4016</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Sealed NYC evaluation:</span>
+                    <span className="text-slate-200">MAE 5.036 m | RMSE 7.239 m</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Model Checkpoint:</span>
+                    <span className="text-cyan-400 font-bold">M3_FINAL.pth (Verified)</span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Sealed NYC evaluation:</span>
-                  <span className="text-slate-200">MAE 4.844 m | RMSE 8.144 m</span>
+              ) : isM2Scene ? (
+                <div className="bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1 font-mono text-[10px]">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">PHL/DC official validation:</span>
+                    <span className="text-slate-200">MAE 2.518 m | RMSE 4.738 m</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Sealed NYC evaluation:</span>
+                    <span className="text-slate-200">MAE 4.844 m | RMSE 8.144 m</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">NYC R²:</span>
+                    <span className="text-amber-400 font-bold">-0.222</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">NYC Building MAE:</span>
+                    <span className="text-cyan-400 font-bold">4.388 m</span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">NYC R²:</span>
-                  <span className="text-amber-400 font-bold">-0.222</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">NYC Building MAE:</span>
-                  <span className="text-cyan-400 font-bold">4.388 m</span>
-                </div>
-              </div>
               ) : (
                 <div className="bg-amber-950/40 border border-amber-800/60 p-2.5 rounded text-[10px] text-amber-300">
-                  This pre-integration artifact is not labelled as M2-FINAL. Process a new scene before using model-specific claims.
+                  This scene artifact was generated with a legacy pipeline.
                 </div>
               )}
 

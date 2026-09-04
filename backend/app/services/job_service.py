@@ -9,6 +9,7 @@ from typing import Dict, Optional
 import numpy as np
 from PIL import Image, UnidentifiedImageError
 
+from backend.app.config import settings
 from backend.app.schemas.jobs import JobStatus
 from backend.app.services.inference_service import inference_service
 from backend.app.services.geospatial_service import geospatial_service
@@ -36,7 +37,7 @@ class JobService:
                 "completed_at": None,
                 "error_message": None,
                 "execution_time_s": None,
-                "model_identity": "M2-FINAL",
+                "model_identity": settings.MODEL_NAME,
                 "warnings": [],
                 "processing_timings": None,
                 "peak_vram_mb": None,
@@ -256,7 +257,7 @@ class JobService:
                 job_id,
                 status=JobStatus.COMPLETED,
                 progress_pct=100,
-                current_stage="M2-FINAL AGL scene and 3D products completed",
+                current_stage=f"{settings.MODEL_NAME} AGL scene and 3D products completed",
                 completed_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 execution_time_s=round(full_api_latency_s, 3),
                 warnings=metadata.get("warnings", []),

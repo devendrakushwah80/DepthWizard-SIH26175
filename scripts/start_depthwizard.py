@@ -20,7 +20,18 @@ print = functools.partial(print, flush=True)
 
 M2_EXPECTED_SHA256 = "6fa4f03dd24726092b75aaf3fa606211c5c66eaaa66ef0dbdbf77eb036bf349f"
 M3_EXPECTED_SHA256 = "db1a7646ef087f13284e5806cc8c7b22baf6a8bb23ed9935082db08bbb376330"
+EXPECTED_M2_SHA256 = M2_EXPECTED_SHA256
+EXPECTED_M3_SHA256 = M3_EXPECTED_SHA256
 DAV2_MODEL_ID = "depth-anything/Depth-Anything-V2-Small-hf"
+
+def verify_sha256(file_path, expected_sha: str) -> bool:
+    if not os.path.exists(file_path):
+        return False
+    hasher = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        while chunk := f.read(65536):
+            hasher.update(chunk)
+    return hasher.hexdigest().lower() == expected_sha.lower()
 
 def is_port_in_use(port):
     for host in ('localhost', '127.0.0.1'):
@@ -153,27 +164,51 @@ def main():
     python_exe = sys.executable
     backend_proc = None
 
+    logs_dir = os.path.join(project_root, "outputs", "logs")
+    os.makedirs(logs_dir, exist_ok=True)
+    backend_log_file = os.path.join(logs_dir, "backend_startup.log")
+    frontend_log_file = os.path.join(logs_dir, "frontend_startup.log")
+
+    # Set active production environment defaults
+    has_cuda = False
+    try:
+        import torch
+        has_cuda = torch.cuda.is_available()
+    except Exception:
+        pass
+
+    os.environ.setdefault("DEPTHWIZARD_MODEL_FAMILY", "M3-FINAL")
+    os.environ.setdefault("DEPTHWIZARD_MODEL_CHECKPOINT", os.path.join(project_root, "models", "m3_final", "M3_FINAL.pth"))
+    os.environ.setdefault("DEPTHWIZARD_DEVICE", "cuda" if has_cuda else "cpu")
+
     # 1. Check / Start Backend (:8000)
     print("\n[Step 1] Checking FastAPI Backend on http://127.0.0.1:8000...")
     is_healthy, h_data = check_backend_health()
     if is_healthy:
         print(f"  [OK] Backend is already running! (Model: {h_data['model']['name']} on {h_data['model']['device']})")
     else:
-        print("  Starting FastAPI Backend Server on port 8000...")
+        print(f"  Starting FastAPI Backend Server on port 8000 (logging to {backend_log_file})...")
+        backend_log = open(backend_log_file, "w", encoding="utf-8")
         backend_proc = subprocess.Popen(
             [python_exe, "-m", "uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"],
             cwd=project_root,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            stdout=backend_log,
+            stderr=subprocess.STDOUT
         )
-        for _ in range(30):
+        for _ in range(35):
             time.sleep(1)
             is_healthy, h_data = check_backend_health()
             if is_healthy:
                 print(f"  [OK] Backend Online! Resident Model: {h_data['model']['name']} on {h_data['model']['device']}")
                 break
         if not is_healthy:
-            print("  [Error] Backend failed to start. Please verify port 8000.")
+            print("\n  [FATAL ERROR] Backend failed to start on port 8000!")
+            print("  --- BACKEND STARTUP LOG (Last 25 lines) ---")
+            if os.path.exists(backend_log_file):
+                with open(backend_log_file, "r", encoding="utf-8") as f:
+                    lines = f.readlines()
+                    print("".join(lines[-25:]))
+            print("  -------------------------------------------")
             sys.exit(1)
 
     # 2. Check / Start Frontend (:3000)
@@ -183,21 +218,31 @@ def main():
     if frontend_in_use:
         print("  [OK] Frontend is already running on port 3000!")
     else:
-        print("  Starting Vite React Frontend Server...")
+        print(f"  Starting Vite React Frontend Server (logging to {frontend_log_file})...")
         frontend_dir = os.path.join(project_root, "frontend")
         npm_cmd = "npm.cmd" if sys.platform == "win32" else "npm"
+        frontend_log = open(frontend_log_file, "w", encoding="utf-8")
         frontend_proc = subprocess.Popen(
             [npm_cmd, "run", "dev"],
             cwd=frontend_dir,
             shell=(sys.platform == "win32"),
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            stdout=frontend_log,
+            stderr=subprocess.STDOUT
         )
-        for _ in range(20):
+        for _ in range(25):
             time.sleep(1)
             if is_port_in_use(3000) or check_frontend_ready():
                 print("  [OK] Frontend Dev Server started!")
                 break
+        if not (is_port_in_use(3000) or check_frontend_ready()):
+            print("\n  [FATAL ERROR] Frontend failed to start on port 3000!")
+            print("  --- FRONTEND STARTUP LOG (Last 25 lines) ---")
+            if os.path.exists(frontend_log_file):
+                with open(frontend_log_file, "r", encoding="utf-8") as f:
+                    lines = f.readlines()
+                    print("".join(lines[-25:]))
+            print("  --------------------------------------------")
+            sys.exit(1)
 
     # 3. Validation or Interactive Loop
     print("\n" + "=" * 80)
@@ -237,6 +282,11 @@ def main():
         print("\nShutting down DepthWizard...")
         if backend_proc:
             backend_proc.terminate()
+        if frontend_proc:
+            if sys.platform == "win32":
+                subprocess.run(["taskkill", "/F", "/T", "/PID", str(frontend_proc.pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            else:
+                frontend_proc.terminate()
 
 if __name__ == '__main__':
     main()

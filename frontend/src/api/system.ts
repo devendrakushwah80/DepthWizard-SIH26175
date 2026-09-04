@@ -8,6 +8,9 @@ import type { HealthResponse, SystemInfoResponse } from '../types';
 
 export async function getHealth(): Promise<HealthResponse> {
   const response = await apiClient.get<HealthResponse>('/health');
+  if (!response.data || typeof response.data !== 'object' || !response.data.status) {
+    throw new Error('DepthWizard backend returned invalid health response.');
+  }
   return response.data;
 }
 

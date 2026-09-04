@@ -16,11 +16,17 @@ import type { SurfaceMode } from '../utils/terrainViewer';
 
 export async function listScenes(): Promise<SceneListItem[]> {
   const response = await apiClient.get<SceneListItem[]>('/api/v1/scenes');
+  if (!Array.isArray(response.data)) {
+    throw new Error('DepthWizard backend returned non-array scene list.');
+  }
   return response.data;
 }
 
 export async function getSceneMetadata(sceneId: string): Promise<SceneMetadataResponse> {
   const response = await apiClient.get<SceneMetadataResponse>(`/api/v1/scenes/${sceneId}`);
+  if (!response.data || typeof response.data !== 'object' || !response.data.scene_id) {
+    throw new Error(`Invalid metadata response received for scene ${sceneId}.`);
+  }
   return response.data;
 }
 

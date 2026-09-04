@@ -131,7 +131,7 @@ describe('Frontend Component Tests', () => {
       scene_id: 'NYC_00735',
       status: 'running_inference',
       progress_pct: 40,
-      current_stage: 'Running frozen DAV2 Small + M2-FINAL AGL inference',
+      current_stage: 'Running frozen DAV2 Small + M3-FINAL AGL inference',
       created_at: '2026-09-01T21:00:00Z',
       started_at: '2026-09-01T21:00:01Z',
       completed_at: null,
@@ -141,6 +141,6 @@ describe('Frontend Component Tests', () => {
 
     render(<ProcessingProgress jobStatus={jobMock} />);
     expect(screen.getByText('40%')).toBeDefined();
-    expect(screen.getByText(/M2-FINAL AGL inference/)).toBeDefined();
+    expect(screen.getByText(/M3-FINAL AGL inference/)).toBeDefined();
   });
 });

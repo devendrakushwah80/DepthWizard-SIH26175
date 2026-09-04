@@ -1030,7 +1030,7 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({
         <span>•</span>
         <span>Zoom: Wheel</span>
         <span>•</span>
-        <span className="text-cyan-400">M2-FINAL GLB</span>
+        <span className="text-cyan-400">{metadata?.model?.identity || 'M3-FINAL'} GLB</span>
       </div>
     </div>
   );

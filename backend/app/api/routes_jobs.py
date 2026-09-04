@@ -108,7 +108,7 @@ async def create_processing_job(
         job_id=job_id,
         status=job_info['status'],
         created_at=job_info['created_at'],
-        message="Image accepted for M2-FINAL asynchronous processing"
+        message=f"Image accepted for {settings.MODEL_NAME} asynchronous processing"
     )
 
 @router.get("/{job_id}", response_model=JobStatusResponse, summary="Query Job Processing Status")

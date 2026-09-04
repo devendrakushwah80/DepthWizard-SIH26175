@@ -12,6 +12,9 @@ import { useInspection } from './hooks/useInspection';
 import { useJobPolling } from './hooks/useJobPolling';
 import type { ProjectionMode, SurfaceMode } from './utils/terrainViewer';
 import { GradioApp } from './GradioApp';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { API_BASE_URL } from './api/client';
+import { AlertCircle, RefreshCw, Sparkles } from 'lucide-react';
 
 interface FullAppProps {
   onSwitchToGradio?: () => void;
@@ -19,8 +22,16 @@ interface FullAppProps {
 
 const FullApp: React.FC<FullAppProps> = ({ onSwitchToGradio }) => {
   // 1. Core Hooks
-  const { health, isOnline } = useSystemHealth();
-  const { scenes, currentSceneId, metadata, loadScene, refreshScenes } = useScene('NYC_00735');
+  const { health, isOnline, isLoading: healthLoading, refetch: refetchHealth } = useSystemHealth();
+  const {
+    scenes,
+    currentSceneId,
+    metadata,
+    loadScene,
+    refreshScenes,
+    isLoading: sceneLoading,
+    error: sceneError
+  } = useScene('NYC_00735');
 
   // 2. Inspection Hook for the active scene
   const {
@@ -114,44 +125,112 @@ const FullApp: React.FC<FullAppProps> = ({ onSwitchToGradio }) => {
 
       {/* 2. Main Workspace Layout */}
       <main className="flex-1 flex overflow-hidden">
-        {/* Center Workspace (2D vs 3D) */}
-        {activeViewMode === '2d' ? (
-          <RasterComparisonView
-            metadata={metadata}
-            activeLayer={active2DLayer}
-            onChangeLayer={setActive2DLayer}
-            onInspectPixel={(u, v) => queryPixel(u, v)}
-            inspectPixelCoord={inspectData ? inspectData.pixel : null}
-            activeTool={activeTool}
-          />
+        {!isOnline && !healthLoading ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <div className="max-w-md w-full bg-slate-900/90 border border-rose-900/50 rounded-xl p-8 shadow-2xl backdrop-blur">
+              <div className="w-14 h-14 mx-auto rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 mb-4">
+                <AlertCircle className="w-7 h-7" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">DepthWizard backend unavailable</h2>
+              <p className="text-xs text-slate-400 mb-6">
+                Cannot connect to the FastAPI inference engine at {API_BASE_URL}. Ensure your backend server is running on port 8000.
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => { refetchHealth(); refreshScenes(); }}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-lg flex items-center gap-2 transition"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Retry Connection
+                </button>
+                {onSwitchToGradio && (
+                  <button
+                    onClick={onSwitchToGradio}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition"
+                  >
+                    Standalone Estimator
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : scenes.length === 0 && !sceneLoading ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <div className="max-w-md w-full bg-slate-900/90 border border-slate-800 rounded-xl p-8 shadow-2xl backdrop-blur">
+              <div className="w-14 h-14 mx-auto rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-4">
+                <Sparkles className="w-7 h-7" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">No scenes available — upload an image</h2>
+              <p className="text-xs text-slate-400 mb-6">
+                Upload an optical satellite image, drone aerial shot, or GeoTIFF to generate M3-FINAL height estimations and a 3D terrain workspace.
+              </p>
+              <button
+                onClick={() => setIsUploadOpen(true)}
+                className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-lg shadow-lg shadow-cyan-600/20 transition"
+              >
+                Upload New Image
+              </button>
+            </div>
+          </div>
+        ) : sceneError && !metadata && !sceneLoading ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <div className="max-w-md w-full bg-slate-900/90 border border-amber-900/50 rounded-xl p-8 shadow-2xl backdrop-blur">
+              <div className="w-14 h-14 mx-auto rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4">
+                <AlertCircle className="w-7 h-7" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">Failed to load scene</h2>
+              <p className="text-xs text-slate-400 mb-6">{sceneError}</p>
+              <button
+                onClick={() => loadScene(currentSceneId || 'NYC_00735')}
+                className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg flex items-center gap-2 mx-auto transition"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Retry Loading Scene
+              </button>
+            </div>
+          </div>
         ) : (
-          <ThreeDCanvas
-            metadata={metadata}
-            activeTextureMode={active3DTexture}
-            onChangeTextureMode={setActive3DTexture}
-            onInspectPixel={(u, v) => queryPixel(u, v)}
-            onMeasurePoint={(pt) => addMeasurePoint(pt)}
-            activeTool={activeTool}
-            verticalExaggeration={verticalExaggeration}
-            onChangeVerticalExaggeration={setVerticalExaggeration}
-            projectionMode={projectionMode}
-            onChangeProjectionMode={setProjectionMode}
-            surfaceMode={surfaceMode}
-            onChangeSurfaceMode={setSurfaceMode}
-          />
-        )}
+          <>
+            {/* Center Workspace (2D vs 3D) */}
+            {activeViewMode === '2d' ? (
+              <RasterComparisonView
+                metadata={metadata}
+                activeLayer={active2DLayer}
+                onChangeLayer={setActive2DLayer}
+                onInspectPixel={(u, v) => queryPixel(u, v)}
+                inspectPixelCoord={inspectData ? inspectData.pixel : null}
+                activeTool={activeTool}
+              />
+            ) : (
+              <ThreeDCanvas
+                metadata={metadata}
+                activeTextureMode={active3DTexture}
+                onChangeTextureMode={setActive3DTexture}
+                onInspectPixel={(u, v) => queryPixel(u, v)}
+                onMeasurePoint={(pt) => addMeasurePoint(pt)}
+                activeTool={activeTool}
+                verticalExaggeration={verticalExaggeration}
+                onChangeVerticalExaggeration={setVerticalExaggeration}
+                projectionMode={projectionMode}
+                onChangeProjectionMode={setProjectionMode}
+                surfaceMode={surfaceMode}
+                onChangeSurfaceMode={setSurfaceMode}
+              />
+            )}
 
-        {/* Right Analytical Panel */}
-        <RightSidebar
-          metadata={metadata}
-          inspectData={inspectData}
-          measureData={measureData}
-          measurePoints={measurePoints}
-          onResetMeasurement={resetMeasurement}
-          activeTool={activeTool}
-          onSelectTool={setActiveTool}
-          surfaceMode={surfaceMode}
-        />
+            {/* Right Analytical Panel */}
+            <RightSidebar
+              metadata={metadata}
+              inspectData={inspectData}
+              measureData={measureData}
+              measurePoints={measurePoints}
+              onResetMeasurement={resetMeasurement}
+              activeTool={activeTool}
+              onSelectTool={setActiveTool}
+              surfaceMode={surfaceMode}
+            />
+          </>
+        )}
       </main>
 
       {/* 3. Bottom Status Bar */}
@@ -191,11 +270,15 @@ export const App: React.FC = () => {
     return import.meta.env.VITE_DEPLOYMENT_MODE === 'gradio' ? 'gradio' : 'workspace';
   });
 
-  if (activeTab === 'gradio') {
-    return <GradioApp onSwitchToWorkspace={() => setActiveTab('workspace')} />;
-  }
-
-  return <FullApp onSwitchToGradio={() => setActiveTab('gradio')} />;
+  return (
+    <ErrorBoundary fallbackModeSwitch={() => setActiveTab(activeTab === 'gradio' ? 'workspace' : 'gradio')}>
+      {activeTab === 'gradio' ? (
+        <GradioApp onSwitchToWorkspace={() => setActiveTab('workspace')} />
+      ) : (
+        <FullApp onSwitchToGradio={() => setActiveTab('gradio')} />
+      )}
+    </ErrorBoundary>
+  );
 };
 
 export default App;

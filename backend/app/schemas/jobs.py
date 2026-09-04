@@ -34,7 +34,7 @@ class JobStatusResponse(BaseModel):
     completed_at: Optional[str] = None
     error_message: Optional[str] = None
     execution_time_s: Optional[float] = None
-    model_identity: str = "M2-FINAL"
+    model_identity: str = "M3-FINAL"
     warnings: List[str] = Field(default_factory=list)
     processing_timings: Optional[Dict[str, float]] = None
     peak_vram_mb: Optional[float] = None

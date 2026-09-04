@@ -1,0 +1,20 @@
+{
+  "scene_id": "NYC_00735",
+  "mesh_resolution": 384,
+  "vertex_count": 148988,
+  "triangle_count": 296442,
+  "vertical_exaggeration": 1.0,
+  "downsample_method": "max_aware",
+  "has_side_skirts": true,
+  "physical_width_m": 512.0,
+  "physical_height_m": 512.0,
+  "horizontal_units": "metres",
+  "height_surface": "predicted_agl",
+  "min_elevation_m": 0.16733910143375397,
+  "max_elevation_m": 8.328351974487305,
+  "mean_elevation_m": 0.9651787877082825,
+  "export_format": "GLB (GLTF 2.0 Binary)",
+  "file_path": "C:\\DepthWizard-SIH26175\\outputs\\scenes\\NYC_00735\\mesh\\scene_agl.glb",
+  "file_size_mb": 9.95248794555664,
+  "texture_resolution": "1024x1024"
+}

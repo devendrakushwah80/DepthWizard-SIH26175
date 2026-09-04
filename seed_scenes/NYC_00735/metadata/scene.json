@@ -1,0 +1,198 @@
+{
+  "scene_id": "NYC_00735",
+  "status": "completed",
+  "created_at": "2026-09-04T13:13:10Z",
+  "model": {
+    "identity": "M3-FINAL",
+    "checkpoint_sha256": "db1a7646ef087f13284e5806cc8c7b22baf6a8bb23ed9935082db08bbb376330",
+    "output_parameterization": "softplus",
+    "dav2_model_id": "depth-anything/Depth-Anything-V2-Small-hf",
+    "dav2_frozen": true
+  },
+  "input_info": {
+    "format": "GeoTIFF",
+    "width": 1024,
+    "height": 1024,
+    "channels": 3,
+    "is_georeferenced": true
+  },
+  "spatial_info": {
+    "is_georeferenced": true,
+    "crs": "EPSG:32618 (WGS 84 / UTM zone 18N)",
+    "gsd_m": 0.5,
+    "gsd_source": "dataset",
+    "horizontal_units": "metres",
+    "physical_width_m": 512.0,
+    "physical_height_m": 512.0,
+    "bounds": {
+      "left": -256.0,
+      "bottom": -256.0,
+      "right": 256.0,
+      "top": 256.0
+    },
+    "transform": [
+      0.5,
+      0.0,
+      -256.0,
+      0.0,
+      -0.5,
+      256.0
+    ],
+    "resolution": [
+      0.5,
+      0.5
+    ]
+  },
+  "dem_provenance": null,
+  "output_semantics": {
+    "primary": "predicted_agl_ndsm",
+    "vertical_unit": "metres",
+    "horizontal_metric_scale_known": true,
+    "absolute_dsm_available": false,
+    "mesh_height_surface": "predicted_agl",
+    "available_mesh_surfaces": [
+      "relative_surface",
+      "predicted_agl"
+    ],
+    "mesh_horizontal_units": "metres",
+    "vertical_exaggeration_baked_into_artifacts": 1.0
+  },
+  "height_stats": {
+    "type": "AGL",
+    "unit": "metres",
+    "min_m": 0.8125144839286804,
+    "max_m": 12.122904777526855,
+    "mean_m": 2.2944982051849365,
+    "median_m": 0.8294463157653809,
+    "std_m": 2.8102827072143555
+  },
+  "slope_mean_deg": 7.072484016418457,
+  "slope_max_deg": 82.7416763305664,
+  "products": {
+    "predicted_agl_npy": true,
+    "predicted_agl_tif": false,
+    "relative_surface_npy": true,
+    "relative_surface_png": true,
+    "aligned_terrain_dem_tif": false,
+    "absolute_dsm_tif": false,
+    "mesh_glb": true,
+    "mesh_agl_glb": true,
+    "mesh_relative_glb": true,
+    "mesh_absolute_dsm_glb": false,
+    "mesh_obj": true,
+    "pointcloud_ply": true,
+    "texture_rgb": true,
+    "texture_height_heatmap": true,
+    "texture_relative_surface": true,
+    "texture_semantic": false,
+    "texture_slope_heatmap": true
+  },
+  "artifacts": {
+    "predicted_agl_npy": "/api/v1/scenes/NYC_00735/download/predicted_agl.npy",
+    "predicted_agl_tif": null,
+    "relative_surface_npy": "/api/v1/scenes/NYC_00735/download/relative_surface.npy",
+    "relative_surface_png": "/api/v1/scenes/NYC_00735/relative_surface",
+    "aligned_terrain_dem_tif": null,
+    "absolute_dsm_tif": null,
+    "mesh_glb": "/api/v1/scenes/NYC_00735/mesh.glb",
+    "mesh_agl_glb": "/api/v1/scenes/NYC_00735/mesh.glb?surface=agl",
+    "mesh_relative_glb": "/api/v1/scenes/NYC_00735/mesh.glb?surface=relative",
+    "mesh_absolute_dsm_glb": null,
+    "pointcloud_ply": "/api/v1/scenes/NYC_00735/pointcloud.ply",
+    "metadata": "/api/v1/scenes/NYC_00735/metadata",
+    "texture_rgb": "/api/v1/scenes/NYC_00735/texture/rgb",
+    "heightmap": "/api/v1/scenes/NYC_00735/heightmap",
+    "relative_surface": "/api/v1/scenes/NYC_00735/relative_surface",
+    "slope": "/api/v1/scenes/NYC_00735/slope"
+  },
+  "processing_timings": {
+    "dav2_inference_s": 0.316781,
+    "m2_inference_s": 0.320975,
+    "total_ai_s": 0.637756,
+    "inference_service_total_s": 1.30213,
+    "window_count": 9,
+    "window_size_px": 512,
+    "window_step_px": 256,
+    "mesh_generation_s": 0.103506,
+    "glb_generation_s": 0.187588,
+    "obj_generation_s": 1.189012,
+    "relative_mesh_generation_s": 0.272622,
+    "absolute_mesh_generation_s": 0.0,
+    "pointcloud_generation_s": 0.01553,
+    "scene_products_s": 2.116795,
+    "full_api_latency_s": 1.302347,
+    "total_pipeline_s": 1.302347
+  },
+  "peak_vram_mb": 230.814,
+  "warnings": [
+    "Absolute DSM unavailable: aligned terrain DEM was not supplied."
+  ],
+  "mesh_info": {
+    "scene_id": "NYC_00735",
+    "mesh_resolution": 384,
+    "vertex_count": 148988,
+    "triangle_count": 296442,
+    "vertical_exaggeration": 1.0,
+    "downsample_method": "max_aware",
+    "has_side_skirts": true,
+    "physical_width_m": 512.0,
+    "physical_height_m": 512.0,
+    "horizontal_units": "metres",
+    "height_surface": "predicted_agl",
+    "min_elevation_m": 0.81251460313797,
+    "max_elevation_m": 11.802216529846191,
+    "mean_elevation_m": 2.301801919937134,
+    "export_format": "GLB (GLTF 2.0 Binary)",
+    "file_path": "C:\\DepthWizard-SIH26175\\outputs\\scenes\\NYC_00735\\mesh\\scene.glb",
+    "file_size_mb": 10.063331604003906,
+    "texture_resolution": "1024x1024",
+    "default_surface": "predicted_agl",
+    "available_surfaces": [
+      "relative_surface",
+      "predicted_agl"
+    ]
+  },
+  "relative_surface_mesh_info": {
+    "scene_id": "NYC_00735",
+    "mesh_resolution": 384,
+    "vertex_count": 148988,
+    "triangle_count": 296442,
+    "vertical_exaggeration": 1.0,
+    "downsample_method": "max_aware",
+    "has_side_skirts": true,
+    "physical_width_m": 512.0,
+    "physical_height_m": 512.0,
+    "horizontal_units": "metres",
+    "height_surface": "predicted_agl",
+    "min_elevation_m": 0.005172369536012411,
+    "max_elevation_m": 24.981592178344727,
+    "mean_elevation_m": 7.805811405181885,
+    "export_format": "GLB (GLTF 2.0 Binary)",
+    "file_path": "C:\\DepthWizard-SIH26175\\outputs\\scenes\\NYC_00735\\mesh\\scene_relative.glb",
+    "file_size_mb": 10.063331604003906,
+    "texture_resolution": "1024x1024"
+  },
+  "absolute_surface_mesh_info": {},
+  "pointcloud_info": {
+    "output_path": "C:\\DepthWizard-SIH26175\\outputs\\scenes\\NYC_00735\\pointcloud\\scene.ply",
+    "point_count": 262144,
+    "sampling_step": 2,
+    "file_size_mb": 5.250306129455566,
+    "format": "binary_ply",
+    "horizontal_units": "metres",
+    "height_surface": "predicted_agl"
+  },
+  "artifact_sizes_bytes": {
+    "predicted_agl_npy": 4194432,
+    "relative_surface_npy": 4194432,
+    "relative_surface_png": 273954,
+    "height_visualization_png": 493827,
+    "slope_visualization_png": 1192654,
+    "rgb_texture_jpg": 443627,
+    "mesh_glb": 10552168,
+    "mesh_agl_glb": 10552168,
+    "mesh_relative_glb": 10552168,
+    "mesh_obj": 29040369,
+    "pointcloud_ply": 5505345
+  }
+}
