@@ -11,12 +11,13 @@ import { useScene } from './hooks/useScene';
 import { useInspection } from './hooks/useInspection';
 import { useJobPolling } from './hooks/useJobPolling';
 import type { ProjectionMode, SurfaceMode } from './utils/terrainViewer';
+import { GradioApp } from './GradioApp';
 
-export const App: React.FC = () => {
+const FullApp: React.FC = () => {
   // 1. Core Hooks
   const { health, isOnline } = useSystemHealth();
   const { scenes, currentSceneId, metadata, loadScene, refreshScenes } = useScene('NYC_00735');
-  
+
   // 2. Inspection Hook for the active scene
   const {
     inspectData,
@@ -57,7 +58,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     const absoluteAvailable = Boolean(
       metadata?.output_semantics?.absolute_dsm_available
-        || metadata?.products.absolute_dsm_tif
+      || metadata?.products.absolute_dsm_tif
     );
     if (!absoluteAvailable && surfaceMode === 'absolute_dsm') {
       setSurfaceMode('agl');
@@ -175,6 +176,14 @@ export const App: React.FC = () => {
       />
     </div>
   );
+};
+
+export const App: React.FC = () => {
+  if (import.meta.env.VITE_DEPLOYMENT_MODE === 'gradio') {
+    return <GradioApp />;
+  }
+
+  return <FullApp />;
 };
 
 export default App;
