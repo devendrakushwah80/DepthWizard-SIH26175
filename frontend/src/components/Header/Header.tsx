@@ -6,7 +6,8 @@ import {
   Upload,
   Cpu,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from 'lucide-react';
 import type { HealthResponse, SceneListItem } from '../../types';
 
@@ -19,6 +20,7 @@ interface HeaderProps {
   activeViewMode: '2d' | '3d';
   onToggleViewMode: (mode: '2d' | '3d') => void;
   onOpenUpload: () => void;
+  onSwitchToGradio?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -29,7 +31,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectScene,
   activeViewMode,
   onToggleViewMode,
-  onOpenUpload
+  onOpenUpload,
+  onSwitchToGradio
 }) => {
   return (
     <header className="h-14 bg-slate-900 border-b border-slate-800 px-4 flex items-center justify-between select-none">
@@ -121,6 +124,17 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
         </div>
+
+        {/* ZeroGPU Estimator Switch Button */}
+        {onSwitchToGradio && (
+          <button
+            onClick={onSwitchToGradio}
+            className="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 hover:border-cyan-500/50 font-medium px-3 py-1.5 rounded-md text-xs transition-colors shadow-sm cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span>ZeroGPU Estimator</span>
+          </button>
+        )}
 
         {/* Upload Button */}
         <button

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader2, Upload } from 'lucide-react';
+import { Loader2, Upload, Box, Satellite, ShieldCheck } from 'lucide-react';
 import { predictAgl, type AglPredictionResult } from './api/gradio';
 
 function getOutputUrl(value: unknown): string | null {
@@ -13,7 +13,11 @@ function getOutputUrl(value: unknown): string | null {
     return null;
 }
 
-export const GradioApp: React.FC = () => {
+interface GradioAppProps {
+    onSwitchToWorkspace?: () => void;
+}
+
+export const GradioApp: React.FC<GradioAppProps> = ({ onSwitchToWorkspace }) => {
     const [file, setFile] = useState<File | null>(null);
     const [gsd, setGsd] = useState('');
     const [result, setResult] = useState<AglPredictionResult | null>(null);
@@ -56,11 +60,43 @@ export const GradioApp: React.FC = () => {
     return (
         <div className="min-h-screen bg-slate-950 text-white p-6">
             <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-bold">DepthWizard</h1>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+                    <div>
+                        <div className="flex items-center space-x-3">
+                            <div className="w-9 h-9 rounded bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                                <Satellite className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <div className="flex items-center space-x-2">
+                                    <h1 className="text-2xl font-bold tracking-wide">DepthWizard</h1>
+                                    <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">
+                                        SIH26175 • ISRO
+                                    </span>
+                                </div>
+                                <p className="text-slate-400 text-xs mt-0.5">
+                                    M3-FINAL · Metric AGL Height Estimation · Hugging Face ZeroGPU Inference
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                <p className="text-slate-400 mt-2">
-                    SIH26175 · M3-FINAL · RGB → Metric AGL / nDSM
-                </p>
+                    <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-mono text-emerald-400">
+                            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                            <span>M3-FINAL (Verified)</span>
+                        </div>
+
+                        {onSwitchToWorkspace && (
+                            <button
+                                onClick={onSwitchToWorkspace}
+                                className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 hover:border-cyan-500/50 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm cursor-pointer"
+                            >
+                                <Box className="w-4 h-4" />
+                                <span>3D Terrain Workspace</span>
+                            </button>
+                        )}
+                    </div>
+                </div>
 
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                     <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">

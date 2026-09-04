@@ -13,7 +13,11 @@ import { useJobPolling } from './hooks/useJobPolling';
 import type { ProjectionMode, SurfaceMode } from './utils/terrainViewer';
 import { GradioApp } from './GradioApp';
 
-const FullApp: React.FC = () => {
+interface FullAppProps {
+  onSwitchToGradio?: () => void;
+}
+
+const FullApp: React.FC<FullAppProps> = ({ onSwitchToGradio }) => {
   // 1. Core Hooks
   const { health, isOnline } = useSystemHealth();
   const { scenes, currentSceneId, metadata, loadScene, refreshScenes } = useScene('NYC_00735');
@@ -105,6 +109,7 @@ const FullApp: React.FC = () => {
         activeViewMode={activeViewMode}
         onToggleViewMode={setActiveViewMode}
         onOpenUpload={() => setIsUploadOpen(true)}
+        onSwitchToGradio={onSwitchToGradio}
       />
 
       {/* 2. Main Workspace Layout */}
@@ -179,11 +184,18 @@ const FullApp: React.FC = () => {
 };
 
 export const App: React.FC = () => {
-  if (import.meta.env.VITE_DEPLOYMENT_MODE === 'gradio') {
-    return <GradioApp />;
+  const [activeTab, setActiveTab] = useState<'workspace' | 'gradio'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'gradio') return 'gradio';
+    if (params.get('mode') === 'workspace') return 'workspace';
+    return import.meta.env.VITE_DEPLOYMENT_MODE === 'gradio' ? 'gradio' : 'workspace';
+  });
+
+  if (activeTab === 'gradio') {
+    return <GradioApp onSwitchToWorkspace={() => setActiveTab('workspace')} />;
   }
 
-  return <FullApp />;
+  return <FullApp onSwitchToGradio={() => setActiveTab('gradio')} />;
 };
 
 export default App;
